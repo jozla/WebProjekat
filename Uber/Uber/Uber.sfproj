@@ -39,7 +39,6 @@
     <ProjectReference Include="..\Gateway\Gateway.csproj">
       <ServiceLaunchUrl>http://localhost:{ServicePort}/swagger</ServiceLaunchUrl>
     </ProjectReference>
-    <ProjectReference Include="..\Stateless1\Stateless1.csproj" />
     <ProjectReference Include="..\UserStatefull\UserStatefull.csproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />

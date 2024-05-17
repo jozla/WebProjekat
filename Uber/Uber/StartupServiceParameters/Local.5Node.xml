@@ -4,7 +4,6 @@
     <Parameter Name="UserStatefull_PartitionCount" Value="1" />
     <Parameter Name="UserStatefull_MinReplicaSetSize" Value="3" />
     <Parameter Name="UserStatefull_TargetReplicaSetSize" Value="3" />
-    <Parameter Name="Stateless1_InstanceCount" Value="1" />
     <Parameter Name="Gateway_InstanceCount" Value="1" />
   </Parameters>
 </StartupServices>

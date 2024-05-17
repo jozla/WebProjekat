@@ -1,4 +1,4 @@
-﻿using Common.Models;
+﻿using Common.DTOs;
 using Communication;
 using Gateway.CQRS;
 using Microsoft.ServiceFabric.Services.Client;
@@ -9,7 +9,7 @@ namespace Gateway.Features.User
     public class GetUserById
     {
         public record GetUserByIdCommand(Guid Id) : IQuery<GetUserByIdResponse>;
-        public record GetUserByIdResponse(UserModel user);
+        public record GetUserByIdResponse(GetUserDto user);
 
 
         public class QueryHandler : IQueryHandler<GetUserByIdCommand, GetUserByIdResponse>
@@ -23,7 +23,20 @@ namespace Gateway.Features.User
 
                 if (existingUser != null)
                 {
-                    return new GetUserByIdResponse(existingUser);
+                    var userDto = new GetUserDto
+                    {
+                        Id = existingUser.Id,
+                        UserName = existingUser.UserName,
+                        Email = existingUser.Email,
+                        Name = existingUser.Name,
+                        LastName = existingUser.LastName,
+                        Birthday = existingUser.Birthday,
+                        Address = existingUser.Address,
+                        Role = existingUser.Role,
+                        Image = existingUser.Image,
+                        VerificationState = existingUser.VerificationState
+                    };
+                    return new GetUserByIdResponse(userDto);
                 }
 
                 return null;

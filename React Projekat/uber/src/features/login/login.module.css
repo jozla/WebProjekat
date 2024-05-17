@@ -1,0 +1,30 @@
+.wrapper{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form {
+    margin-top: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.inputError {
+    border: 1px solid red;
+}
+   
+.error {
+     color: red;
+     font-size: 0.8rem;
+     margin-top: 0.2rem;
+}
+
+.submitButton {
+    width: 100%;
+}
+
+.field {
+    width: 300px;
+}

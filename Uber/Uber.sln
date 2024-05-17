@@ -5,15 +5,13 @@ VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "Uber", "Uber\Uber.sfproj", "{F3709ACB-D34F-422B-9E15-C95C59AC3845}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gateway", "Gateway\Gateway.csproj", "{AA6C00D4-41E9-47F8-8279-80665FA64149}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gateway", "Gateway\Gateway.csproj", "{AA6C00D4-41E9-47F8-8279-80665FA64149}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stateless1", "Stateless1\Stateless1.csproj", "{18FD3BB7-205F-4316-9A78-AD4D16B07EF6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserStatefull", "UserStatefull\UserStatefull.csproj", "{13102430-9657-4874-A5B4-EA4013D9BF02}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserStatefull", "UserStatefull\UserStatefull.csproj", "{13102430-9657-4874-A5B4-EA4013D9BF02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{4718146B-F6CE-4154-AB27-D97D849B9D82}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{4718146B-F6CE-4154-AB27-D97D849B9D82}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Communication", "Communication\Communication.csproj", "{E85FFF46-37AE-47CE-98CC-CAB33F357497}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communication", "Communication\Communication.csproj", "{E85FFF46-37AE-47CE-98CC-CAB33F357497}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,14 +41,6 @@ Global
 		{AA6C00D4-41E9-47F8-8279-80665FA64149}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AA6C00D4-41E9-47F8-8279-80665FA64149}.Release|x64.ActiveCfg = Release|Any CPU
 		{AA6C00D4-41E9-47F8-8279-80665FA64149}.Release|x64.Build.0 = Release|Any CPU
-		{18FD3BB7-205F-4316-9A78-AD4D16B07EF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{18FD3BB7-205F-4316-9A78-AD4D16B07EF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{18FD3BB7-205F-4316-9A78-AD4D16B07EF6}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{18FD3BB7-205F-4316-9A78-AD4D16B07EF6}.Debug|x64.Build.0 = Debug|Any CPU
-		{18FD3BB7-205F-4316-9A78-AD4D16B07EF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{18FD3BB7-205F-4316-9A78-AD4D16B07EF6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{18FD3BB7-205F-4316-9A78-AD4D16B07EF6}.Release|x64.ActiveCfg = Release|Any CPU
-		{18FD3BB7-205F-4316-9A78-AD4D16B07EF6}.Release|x64.Build.0 = Release|Any CPU
 		{13102430-9657-4874-A5B4-EA4013D9BF02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{13102430-9657-4874-A5B4-EA4013D9BF02}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13102430-9657-4874-A5B4-EA4013D9BF02}.Debug|x64.ActiveCfg = Debug|Any CPU
