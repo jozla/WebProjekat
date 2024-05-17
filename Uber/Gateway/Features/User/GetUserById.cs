@@ -8,15 +8,15 @@ namespace Gateway.Features.User
 {
     public class GetUserById
     {
-        public record GetUserByIdCommand(Guid Id) : IQuery<GetUserByIdResponse>;
+        public record GetUserByIdQuery(Guid Id) : IQuery<GetUserByIdResponse>;
         public record GetUserByIdResponse(GetUserDto user);
 
 
-        public class QueryHandler : IQueryHandler<GetUserByIdCommand, GetUserByIdResponse>
+        public class QueryHandler : IQueryHandler<GetUserByIdQuery, GetUserByIdResponse>
         {
-            public async Task<GetUserByIdResponse> Handle(GetUserByIdCommand request, CancellationToken cancellationToken)
+            public async Task<GetUserByIdResponse> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
             {
-                var proxy = ServiceProxy.Create<IUserStatefullCommunication>(
+                var proxy = ServiceProxy.Create<IUserStatefulCommunication>(
                     new Uri("fabric:/Uber/UserStatefull"), new ServicePartitionKey(1));
 
                 var existingUser = await proxy.GetUserById(request.Id);

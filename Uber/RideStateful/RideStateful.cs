@@ -1,3 +1,4 @@
+using Common.Enums;
 using Common.Models;
 using Communication;
 using Microsoft.ServiceFabric.Data.Collections;
@@ -6,98 +7,151 @@ using Microsoft.ServiceFabric.Services.Remoting.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using System.Fabric;
 
-namespace UserStatefull
+namespace RideStateful
 {
     /// <summary>
     /// An instance of this class is created for each service replica by the Service Fabric runtime.
     /// </summary>
-    internal sealed class UserStatefull : StatefulService, IUserStatefulCommunication
+    internal sealed class RideStateful : StatefulService, IRideStatefulCommunication
     {
-        public UserStatefull(StatefulServiceContext context)
+        public RideStateful(StatefulServiceContext context)
             : base(context)
         { }
 
-        #region UserMethods
-        public async Task<IEnumerable<UserModel>> GetAllUsers()
+        #region RideMethods
+        public async Task AddRide(RideModel ride)
         {
             var stateManager = this.StateManager;
-            var usersDict = await stateManager.GetOrAddAsync<IReliableDictionary<Guid, UserModel>>("usersDict");
-
-            var users = new List<UserModel>();
+            var ridesDict = await stateManager.GetOrAddAsync<IReliableDictionary<Guid, RideModel>>("ridesDict");
 
             using (var transaction = stateManager.CreateTransaction())
             {
-                var enumerable = await usersDict.CreateEnumerableAsync(transaction);
+                await ridesDict.AddOrUpdateAsync(transaction, ride.Id, ride, (k, v) => v);
+                await transaction.CommitAsync();
+            }
+        }
+
+        public async Task<IEnumerable<RideModel>> GetAllRides()
+        {
+            var stateManager = this.StateManager;
+            var ridesDict = await stateManager.GetOrAddAsync<IReliableDictionary<Guid, RideModel>>("ridesDict");
+
+            var rides = new List<RideModel>();
+
+            using (var transaction = stateManager.CreateTransaction())
+            {
+                var enumerable = await ridesDict.CreateEnumerableAsync(transaction);
                 var enumerator = enumerable.GetAsyncEnumerator();
 
                 while (await enumerator.MoveNextAsync(default))
                 {
-                    users.Add(enumerator.Current.Value);
+                    rides.Add(enumerator.Current.Value);
                 }
             }
 
-            return users;
+            return rides;
         }
 
-        public async Task<UserModel> GetUserByEmail(string email)
+        public async Task<IEnumerable<RideModel>> GetNewRides()
         {
             var stateManager = this.StateManager;
-            var usersDict = await stateManager.GetOrAddAsync<IReliableDictionary<Guid, UserModel>>("usersDict");
+            var ridesDict = await stateManager.GetOrAddAsync<IReliableDictionary<Guid, RideModel>>("ridesDict");
+
+            var newRides = new List<RideModel>();
 
             using (var transaction = stateManager.CreateTransaction())
             {
-                var enumerator = (await usersDict.CreateEnumerableAsync(transaction)).GetAsyncEnumerator();
+                var enumerable = await ridesDict.CreateEnumerableAsync(transaction);
+                var enumerator = enumerable.GetAsyncEnumerator();
 
                 while (await enumerator.MoveNextAsync(default))
                 {
-                    var user = enumerator.Current.Value;
-                    if (user.Email == email)
+                    var currentRide = enumerator.Current.Value;
+                    if (currentRide.Status == RideStatus.Pending)
                     {
-                        return user;
+                        newRides.Add(currentRide);
                     }
                 }
             }
-            return null;
+
+            return newRides;
         }
 
-        public async Task<UserModel> GetUserById(Guid id)
+        public async Task<RideModel> GetRideById(Guid rideId)
         {
             var stateManager = this.StateManager;
-            var usersDict = await stateManager.GetOrAddAsync<IReliableDictionary<Guid, UserModel>>("usersDict");
+            var ridesDict = await stateManager.GetOrAddAsync<IReliableDictionary<Guid, RideModel>>("ridesDict");
 
             using (var transaction = stateManager.CreateTransaction())
             {
-                var user = await usersDict.TryGetValueAsync(transaction, id);
+                var ride = await ridesDict.TryGetValueAsync(transaction, rideId);
 
-                return user.Value;
+                return ride.Value;
             }
         }
 
-        public async Task Register(UserModel user)
+        public async Task<IEnumerable<RideModel>> GetRidesForDriver(Guid driverId)
         {
             var stateManager = this.StateManager;
-            var usersDict = await stateManager.GetOrAddAsync<IReliableDictionary<Guid, UserModel>>("usersDict");
+            var ridesDict = await stateManager.GetOrAddAsync<IReliableDictionary<Guid, RideModel>>("ridesDict");
+
+            var newRides = new List<RideModel>();
 
             using (var transaction = stateManager.CreateTransaction())
             {
-                await usersDict.AddOrUpdateAsync(transaction, user.Id, user, (k, v) => v);
-                await transaction.CommitAsync();
+                var enumerable = await ridesDict.CreateEnumerableAsync(transaction);
+                var enumerator = enumerable.GetAsyncEnumerator();
+
+                while (await enumerator.MoveNextAsync(default))
+                {
+                    var currentRide = enumerator.Current.Value;
+                    if (currentRide.DriverId == driverId && currentRide.Status == RideStatus.Finished)
+                    {
+                        newRides.Add(currentRide);
+                    }
+                }
             }
+
+            return newRides;
         }
 
-        public async Task UpdateUser(UserModel user)
+        public async Task<IEnumerable<RideModel>> GetRidesForUser(Guid userId)
         {
             var stateManager = this.StateManager;
-            var usersDict = await stateManager.GetOrAddAsync<IReliableDictionary<Guid, UserModel>>("usersDict");
+            var ridesDict = await stateManager.GetOrAddAsync<IReliableDictionary<Guid, RideModel>>("ridesDict");
+
+            var newRides = new List<RideModel>();
 
             using (var transaction = stateManager.CreateTransaction())
             {
-                await usersDict.AddOrUpdateAsync(transaction, user.Id, user, (k, v) => user);
+                var enumerable = await ridesDict.CreateEnumerableAsync(transaction);
+                var enumerator = enumerable.GetAsyncEnumerator();
+
+                while (await enumerator.MoveNextAsync(default))
+                {
+                    var currentRide = enumerator.Current.Value;
+                    if (currentRide.PassengerId == userId && currentRide.Status == RideStatus.Finished)
+                    {
+                        newRides.Add(currentRide);
+                    }
+                }
+            }
+
+            return newRides;
+        }
+
+        public async Task UpdateRide(RideModel ride)
+        {
+            var stateManager = this.StateManager;
+            var ridesDict = await stateManager.GetOrAddAsync<IReliableDictionary<Guid, RideModel>>("ridesDict");
+
+            using (var transaction = stateManager.CreateTransaction())
+            {
+                await ridesDict.AddOrUpdateAsync(transaction, ride.Id, ride, (k, v) => ride);
                 await transaction.CommitAsync();
             }
         }
         #endregion
-
 
         /// <summary>
         /// Optional override to create listeners (e.g., HTTP, Service Remoting, WCF, etc.) for this service replica to handle client or user requests.

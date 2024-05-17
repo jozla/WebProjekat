@@ -37,7 +37,7 @@ namespace Gateway.Features.User
                     newUser.VerificationState = VerificationState.Processing;
                 }
 
-                var proxy = ServiceProxy.Create<IUserStatefullCommunication>(
+                var proxy = ServiceProxy.Create<IUserStatefulCommunication>(
                     new Uri("fabric:/Uber/UserStatefull"), new ServicePartitionKey(1));
 
                 await proxy.Register(newUser);

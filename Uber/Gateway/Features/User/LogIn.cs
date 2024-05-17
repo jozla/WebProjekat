@@ -26,7 +26,7 @@ namespace Gateway.Features.User
 
             public async Task<LogInResponse> Handle(LogInCommand request, CancellationToken cancellationToken)
             {
-                var proxy = ServiceProxy.Create<IUserStatefullCommunication>(
+                var proxy = ServiceProxy.Create<IUserStatefulCommunication>(
                              new Uri("fabric:/Uber/UserStatefull"), new ServicePartitionKey(1));
 
                 var existingUser = await proxy.GetUserByEmail(request.Email);

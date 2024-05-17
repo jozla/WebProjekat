@@ -50,7 +50,7 @@ namespace Gateway.Controllers
         [Authorize]
         public async Task<ActionResult> GetAllUsers(Guid id)
         {
-            var response = await _mediator.Send(new GetUserById.GetUserByIdCommand(id));
+            var response = await _mediator.Send(new GetUserById.GetUserByIdQuery(id));
             return Ok(response);
         }
 

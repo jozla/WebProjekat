@@ -3,7 +3,7 @@ using Microsoft.ServiceFabric.Services.Remoting;
 
 namespace Communication
 {
-    public interface IUserStatefullCommunication : IService
+    public interface IUserStatefulCommunication : IService
     {
         Task Register(UserModel user);
         Task<UserModel> GetUserByEmail(string email);
