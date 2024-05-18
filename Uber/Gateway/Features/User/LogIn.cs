@@ -51,7 +51,8 @@ namespace Gateway.Features.User
                 var userClaims = new[]
                 {
                 new Claim("user_id", user.Id.ToString()),
-            };
+                new Claim("user_role", user.Role.ToString()),
+                };
 
                 var token = new JwtSecurityToken(
                     issuer: configuration["Jwt:Issuer"],

@@ -1,8 +1,7 @@
-using System;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Services.Runtime;
+using System.Diagnostics;
 
 namespace RideStateful
 {
@@ -20,8 +19,12 @@ namespace RideStateful
                 // When Service Fabric creates an instance of this service type,
                 // an instance of the class is created in this host process.
 
+                var provider = new ServiceCollection()
+                    .AddDbContext<RidesDbContext>(options => options.UseSqlServer("Server=localhost,1434;Database=Database;User Id=sa;Password=Sifra123!;TrustServerCertificate=true;"))
+                    .BuildServiceProvider();
+
                 ServiceRuntime.RegisterServiceAsync("RideStatefulType",
-                    context => new RideStateful(context)).GetAwaiter().GetResult();
+                    context => new RideStateful(context, provider)).GetAwaiter().GetResult();
 
                 ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(RideStateful).Name);
 

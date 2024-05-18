@@ -1,15 +1,17 @@
 import { Formik, Field, ErrorMessage, FormikValues, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { login } from "../../services/user.service";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styles from '../login/login.module.css'
+import { DecodeToken } from "../../services/token-decoder";
 
 export default function LogIn() {
+  const navigate = useNavigate();
   interface LoginFormValues {
     email: string;
     password: string;
   }
-
+  
   const initialValues: LoginFormValues = {
     email: "",
     password: "",
@@ -23,6 +25,11 @@ export default function LogIn() {
   const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<LoginFormValues>) => {
     var response = await login(values);
     localStorage.setItem("access_token",JSON.stringify(response.token));
+
+    //TODO
+    // var decodedToken = DecodeToken();
+    navigate('user/add-ride')
+
     setSubmitting(false);
   };
 

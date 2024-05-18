@@ -1,6 +1,7 @@
 using Common.Enums;
 using Common.Models;
 using Communication;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Remoting.Runtime;
@@ -14,9 +15,12 @@ namespace RideStateful
     /// </summary>
     internal sealed class RideStateful : StatefulService, IRideStatefulCommunication
     {
-        public RideStateful(StatefulServiceContext context)
+        private RidesDbContext _myDbContext;
+        public RideStateful(StatefulServiceContext context, IServiceProvider provider)
             : base(context)
-        { }
+        {
+            _myDbContext = provider.GetService<RidesDbContext>()!;
+        }
 
         #region RideMethods
         public async Task AddRide(RideModel ride)

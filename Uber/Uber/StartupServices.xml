@@ -17,7 +17,7 @@
          The attribute ServiceTypeName below must match the name defined in the imported ServiceManifest.xml file. -->
     <Service Name="RideStateful" ServicePackageActivationMode="ExclusiveProcess">
       <StatefulService ServiceTypeName="RideStatefulType" TargetReplicaSetSize="[RideStateful_TargetReplicaSetSize]" MinReplicaSetSize="[RideStateful_MinReplicaSetSize]">
-        <UniformInt64Partition PartitionCount="[RideStateful_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+        <UniformInt64Partition PartitionCount="[RideStateful_PartitionCount]" LowKey="0" HighKey="9" />
       </StatefulService>
     </Service>
     <Service Name="UserStatefull" ServicePackageActivationMode="ExclusiveProcess">

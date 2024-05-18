@@ -17,4 +17,4 @@ export const register = async (data:any) => {
       console.error("Error fetching users:", error);
       throw error;
     }
-  };
+};

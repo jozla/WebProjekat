@@ -24,6 +24,5 @@ namespace Common.Models
         public Guid PassengerId { get; set; }
         [DataMember]
         public RideStatus Status { get; set; } = RideStatus.Pending;
-
     }
 }

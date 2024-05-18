@@ -2,8 +2,11 @@ import { Formik, Field, ErrorMessage, FormikValues, FormikHelpers } from "formik
 import * as Yup from "yup";
 import { register } from "../../services/user.service";
 import styles from '../register/register.module.css';
+import { useNavigate } from "react-router-dom";
 
 export default function Register() {
+  const navigate = useNavigate();
+
   interface RegisterFormValues {
     userName: string;
     email: string;
@@ -43,10 +46,15 @@ export default function Register() {
     values: FormikValues,
     { setSubmitting }: FormikHelpers<RegisterFormValues>
   ) => {
+    var type = values.userType;
     values.userType = values.userType ? 2 : 1;
-    
-    console.log(values);
-    await register(values);
+    try{
+      await register(values);
+      navigate('/');
+    }
+    catch {
+      values.userType = type;
+    }
     setSubmitting(false);
   };
 
