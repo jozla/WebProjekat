@@ -1,21 +1,11 @@
 import { useEffect, useState } from "react";
-import { getUserRides } from "../../services/ride.service";
-import { DecodeToken } from "../../services/token-decoder";
+import { getUserRides } from "../../../services/ride.service";
+import { DecodeToken } from "../../../services/token-decoder";
 import styles from "../user-dashboard/user-dashboard.module.css";
 import { useNavigate } from "react-router-dom";
+import { RideModel } from "../../../shared/models/ride";
 
 export function UserDashboard() {
-  interface RideModel {
-    id: string;
-    startingPoint: string;
-    endingPoint: string;
-    price: number;
-    driverTimeInSeconds: number;
-    arrivalTimeInSeconds: number;
-    driverId: string;
-    passengerId: string;
-    status: number;
-  }
   const [rides, setRides] = useState<{ data: RideModel[] }>({ data: [] });
   const getRides = async () => {
     var response = await getUserRides(DecodeToken().user_id);
@@ -51,7 +41,8 @@ export function UserDashboard() {
               <tr>
                 <th>Starting Point</th>
                 <th>Ending Point</th>
-                <th>Price</th>
+                <th>Price - $</th>
+                <th>Travel time - min</th>
               </tr>
             </thead>
             <tbody>
@@ -60,6 +51,7 @@ export function UserDashboard() {
                   <td>{row.startingPoint}</td>
                   <td>{row.endingPoint}</td>
                   <td>{row.price}</td>
+                  <td>{Math.floor(row.arrivalTimeInSeconds / 60)}</td>
                 </tr>
               ))}
             </tbody>

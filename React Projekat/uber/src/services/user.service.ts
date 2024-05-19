@@ -1,6 +1,8 @@
+import { LoginFormValues } from "../features/login/login";
+import { UserModel } from "../shared/models/user";
 import axiosInstance from "./axios-interceptor";
 
-export const login = async (data:any) => {
+export const login = async (data:LoginFormValues) => {
   try {
     const response = await axiosInstance.post('/users/login', data);
     return response.data;
@@ -10,8 +12,9 @@ export const login = async (data:any) => {
   }
 };
 
-export const register = async (data:any) => {
+export const register = async (data:UserModel) => {
     try {
+      console.log(data)
       await axiosInstance.post('/users', data);
     } catch (error) {
       console.error("Error fetching users:", error);

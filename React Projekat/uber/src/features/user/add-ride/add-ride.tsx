@@ -1,12 +1,13 @@
 import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from "formik";
 import styles from "../add-ride/add-ride.module.css";
 import * as Yup from "yup";
-import { DecodeToken } from "../../services/token-decoder";
+import { DecodeToken } from "../../../services/token-decoder";
 import { useState } from "react";
-import { addRide } from "../../services/ride.service";
+import { addRide } from "../../../services/ride.service";
+import { RideModel } from "../../../shared/models/ride";
 
 export function AddRide() {
-  const [rideDetails, setRideDetails] = useState<any>(null);
+  const [rideDetails, setRideDetails] = useState<RideModel|null>(null);
 
   interface NewRideValues {
     startingPoint: string;
@@ -24,8 +25,8 @@ export function AddRide() {
   });
 
   const generateRandomValues = () => {
-    var randomPrice = Math.floor(Math.random() * 100) + 1; // Random price between 1 and 100
-    var randomDriverTime = Math.floor(Math.random() * 3600); // Random arrival time between 0 and 1 hour (in seconds)
+    var randomPrice = Math.floor(Math.random() * 100) + 1; 
+    var randomDriverTime = Math.floor(Math.random() * 3600); 
     randomDriverTime = Math.max(randomDriverTime, 300);
     return { price: randomPrice, driverTime: randomDriverTime };
   };
@@ -39,12 +40,12 @@ export function AddRide() {
       driverTimeInSeconds: driverTime,
       passengerId: DecodeToken().user_id,
     };
-    setRideDetails(rideData);
+    setRideDetails(rideData as RideModel);
     setSubmitting(false);
   };
 
   const confirmRide = async () => {
-    await addRide(rideDetails);
+    await addRide(rideDetails as RideModel);
   };
 
   const OnChange = () => {

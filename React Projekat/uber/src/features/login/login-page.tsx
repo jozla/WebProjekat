@@ -4,13 +4,10 @@ import { login } from "../../services/user.service";
 import { Link, useNavigate } from "react-router-dom";
 import styles from '../login/login.module.css'
 import { DecodeToken } from "../../services/token-decoder";
+import { LoginFormValues } from "./login";
 
 export default function LogIn() {
   const navigate = useNavigate();
-  interface LoginFormValues {
-    email: string;
-    password: string;
-  }
   
   const initialValues: LoginFormValues = {
     email: "",
@@ -23,12 +20,12 @@ export default function LogIn() {
   });
 
   const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<LoginFormValues>) => {
-    var response = await login(values);
+    var response = await login(values as LoginFormValues);
     localStorage.setItem("access_token",JSON.stringify(response.token));
 
     //TODO
-    // var decodedToken = DecodeToken();
-    navigate('user/add-ride')
+    var decodedToken = DecodeToken();
+    decodedToken.user_role == 'User' ? navigate('user/dashboard') : navigate('driver/dashboard')
 
     setSubmitting(false);
   };

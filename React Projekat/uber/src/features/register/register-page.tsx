@@ -1,12 +1,12 @@
 import { Formik, Field, ErrorMessage, FormikValues, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { register } from "../../services/user.service";
-import styles from '../register/register.module.css';
+import styles from "../register/register.module.css";
 import { useNavigate } from "react-router-dom";
+import { UserModel } from "../../shared/models/user";
 
 export default function Register() {
   const navigate = useNavigate();
-
   interface RegisterFormValues {
     userName: string;
     email: string;
@@ -15,10 +15,10 @@ export default function Register() {
     lastName: string;
     birthday: string;
     address: string;
-    userType: boolean;
+    role: boolean;
     image: string;
   }
-
+  
   const initialValues: RegisterFormValues = {
     userName: "",
     email: "",
@@ -27,7 +27,7 @@ export default function Register() {
     lastName: "",
     birthday: "",
     address: "",
-    userType: false,
+    role: false,
     image: "",
   };
 
@@ -42,18 +42,14 @@ export default function Register() {
     image: Yup.string().required("Image is required"),
   });
 
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<RegisterFormValues>
-  ) => {
-    var type = values.userType;
-    values.userType = values.userType ? 2 : 1;
-    try{
-      await register(values);
-      navigate('/');
-    }
-    catch {
-      values.userType = type;
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<RegisterFormValues>) => {
+    var role = values.role;
+    values.role = values.role ? 2 : 1;
+    try {
+      await register(values as UserModel);
+      navigate("/");
+    } catch {
+      values.role = role;
     }
     setSubmitting(false);
   };
@@ -67,91 +63,49 @@ export default function Register() {
             <form onSubmit={handleSubmit}>
               <div className="form-group">
                 <label htmlFor="userName">Username</label>
-                <Field
-                  type="text"
-                  className={`form-control ${styles.field} ${errors.userName && touched.userName ? styles.inputError : ""}`}
-                  name="userName"
-                  placeholder="Enter username"
-                />
+                <Field type="text" className={`form-control ${styles.field} ${errors.userName && touched.userName ? styles.inputError : ""}`} name="userName" placeholder="Enter username" />
                 <ErrorMessage name="userName" component="div" className={styles.error} />
               </div>
               <div className="form-group">
                 <label htmlFor="email">Email address</label>
-                <Field
-                  type="email"
-                  className={`form-control ${styles.field} ${errors.email && touched.email ? styles.inputError : ""}`}
-                  name="email"
-                  placeholder="Enter email"
-                />
+                <Field type="email" className={`form-control ${styles.field} ${errors.email && touched.email ? styles.inputError : ""}`} name="email" placeholder="Enter email" />
                 <ErrorMessage name="email" component="div" className={styles.error} />
               </div>
               <div className="form-group">
                 <label htmlFor="password">Password</label>
-                <Field
-                  type="password"
-                  className={`form-control ${styles.field} ${errors.password && touched.password ? styles.inputError : ""}`}
-                  name="password"
-                  placeholder="Password"
-                />
+                <Field type="password" className={`form-control ${styles.field} ${errors.password && touched.password ? styles.inputError : ""}`} name="password" placeholder="Password" />
                 <ErrorMessage name="password" component="div" className={styles.error} />
               </div>
               <div className="form-group">
                 <label htmlFor="name">Name</label>
-                <Field
-                  type="text"
-                  className={`form-control ${styles.field} ${errors.name && touched.name ? styles.inputError : ""}`}
-                  name="name"
-                  placeholder="Enter name"
-                />
+                <Field type="text" className={`form-control ${styles.field} ${errors.name && touched.name ? styles.inputError : ""}`} name="name" placeholder="Enter name" />
                 <ErrorMessage name="name" component="div" className={styles.error} />
               </div>
               <div className="form-group">
                 <label htmlFor="lastName">Last Name</label>
-                <Field
-                  type="text"
-                  className={`form-control ${styles.field} ${errors.lastName && touched.lastName ? styles.inputError : ""}`}
-                  name="lastName"
-                  placeholder="Enter last name"
-                />
+                <Field type="text" className={`form-control ${styles.field} ${errors.lastName && touched.lastName ? styles.inputError : ""}`} name="lastName" placeholder="Enter last name" />
                 <ErrorMessage name="lastName" component="div" className={styles.error} />
               </div>
               <div className="form-group">
                 <label htmlFor="birthday">Date of Birth</label>
-                <Field
-                  type="text"
-                  className={`form-control ${styles.field} ${errors.birthday && touched.birthday ? styles.inputError : ""}`}
-                  name="birthday"
-                  placeholder="YYYY-MM-DD"
-                />
+                <Field type="text" className={`form-control ${styles.field} ${errors.birthday && touched.birthday ? styles.inputError : ""}`} name="birthday" placeholder="YYYY-MM-DD" />
                 <ErrorMessage name="birthday" component="div" className={styles.error} />
               </div>
               <div className="form-group">
                 <label htmlFor="address">Address</label>
-                <Field
-                  type="text"
-                  className={`form-control ${styles.field} ${errors.address && touched.address ? styles.inputError : ""}`}
-                  name="address"
-                  placeholder="Enter address"
-                />
+                <Field type="text" className={`form-control ${styles.field} ${errors.address && touched.address ? styles.inputError : ""}`} name="address" placeholder="Enter address" />
                 <ErrorMessage name="address" component="div" className={styles.error} />
               </div>
               <div className="form-group">
-                <Field
-                  type="checkbox"
-                  className={`form-check-input`}
-                  name="userType"
-                />
-                <label htmlFor="userType" className="form-check-label ms-2">Are you a driver?</label>
+                <Field type="checkbox" className={`form-check-input`} name="role" />
+                <label htmlFor="role" className="form-check-label ms-2">
+                  Are you a driver?
+                </label>
               </div>
               <div className="form-group">
                 <label htmlFor="image">Profile Picture</label>
-                <Field
-                  type="text"
-                  className={`form-control ${styles.field} ${errors.image && touched.image ? styles.inputError : ""}`}
-                  name="image"
-                  placeholder="Enter image URL"
-                />
-                <ErrorMessage name="image" component="div" className={styles.error}/>
+                <Field type="text" className={`form-control ${styles.field} ${errors.image && touched.image ? styles.inputError : ""}`} name="image" placeholder="Enter image URL" />
+                <ErrorMessage name="image" component="div" className={styles.error} />
               </div>
               <button type="submit" className={`btn btn-primary mt-3 ${styles.submitButton}`} disabled={!isValid || !dirty}>
                 Submit
