@@ -5,9 +5,11 @@ import { DecodeToken } from "../../../services/token-decoder";
 import { useState } from "react";
 import { addRide } from "../../../services/ride.service";
 import { RideModel } from "../../../shared/models/ride";
+import { useNavigate } from "react-router-dom";
 
 export function AddRide() {
   const [rideDetails, setRideDetails] = useState<RideModel|null>(null);
+  const navigate = useNavigate();
 
   interface NewRideValues {
     startingPoint: string;
@@ -45,7 +47,13 @@ export function AddRide() {
   };
 
   const confirmRide = async () => {
-    await addRide(rideDetails as RideModel);
+    try{
+      await addRide(rideDetails as RideModel);
+      navigate('/user/waiting-page')
+    }
+    catch{
+      console.log("Error adding new ride");
+    }
   };
 
   const OnChange = () => {

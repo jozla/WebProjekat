@@ -20,13 +20,18 @@ export default function LogIn() {
   });
 
   const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<LoginFormValues>) => {
-    var response = await login(values as LoginFormValues);
-    localStorage.setItem("access_token",JSON.stringify(response.token));
-
-    //TODO
-    var decodedToken = DecodeToken();
-    decodedToken.user_role == 'User' ? navigate('user/dashboard') : navigate('driver/dashboard')
-
+    
+    try{
+      var response = await login(values as LoginFormValues);
+      localStorage.setItem("access_token",JSON.stringify(response.token));
+      
+      //TODO
+      var decodedToken = DecodeToken();
+      decodedToken.user_role == 'User' ? navigate('user/dashboard') : navigate('driver/dashboard')
+    }
+    catch{
+      
+    }
     setSubmitting(false);
   };
 

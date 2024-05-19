@@ -7,8 +7,13 @@ import { RideModel } from "../../../shared/models/ride";
 export function PreviousRides() {
   const [rides, setRides] = useState<{ data: RideModel[] }>({ data: [] });
   const getRides = async () => {
-    var response = await getPreviousRidesForDriver(DecodeToken().user_id);
-    setRides({ data: response.rides });
+    try{
+      var response = await getPreviousRidesForDriver(DecodeToken().user_id);
+      setRides({ data: response.rides });
+    }
+    catch{
+      console.log("Error getting previous rides");
+    }
   };
 
   useEffect(() => {

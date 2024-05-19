@@ -12,5 +12,6 @@ namespace Communication
         Task<IEnumerable<RideModel>> GetNewRides();
         Task<IEnumerable<RideModel>> GetRidesForDriver(Guid driverId);
         Task<IEnumerable<RideModel>> GetRidesForUser(Guid userId);
+        Task<RideModel> GetConfirmedRide(Guid userId);
     }
 }

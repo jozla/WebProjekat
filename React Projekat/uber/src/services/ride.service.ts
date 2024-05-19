@@ -48,3 +48,13 @@ export const confirmRide = async (data:any) => {
     throw error;
   }
 }
+
+export const getConfirmedRide = async (userId:string) => {
+  try {
+    const response = await axiosInstance.get("/rides/confirmed-ride/" + userId);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching rides:", error);
+    throw error;
+  }
+}

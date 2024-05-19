@@ -1,6 +1,8 @@
 ﻿using Gateway.Features.Ride;
+using Gateway.Helpers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Gateway.Controllers
 {
@@ -9,16 +11,19 @@ namespace Gateway.Controllers
     public class RidesController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IHubContext<ChatHub, IChatHub> _chatHub;
 
-        public RidesController(IMediator mediator)
+        public RidesController(IMediator mediator, IHubContext<ChatHub, IChatHub> chatHub)
         {
             _mediator = mediator;
+            _chatHub = chatHub;
         }
 
         [HttpPost]
         public async Task<ActionResult> AddRide(AddRide.AddRideCommand request)
         {
             await _mediator.Send(request);
+            await _chatHub.Clients.Group("Driver").SendMessage("Added");
             return Ok();
         }
 
@@ -26,6 +31,7 @@ namespace Gateway.Controllers
         public async Task<ActionResult> ConfirmRide(ConfirmRide.ConfirmRideCommand request)
         {
             await _mediator.Send(request);
+            await _chatHub.Clients.Group("User").SendMessage("Confirmed");
             return Ok();
         }
 
@@ -68,6 +74,13 @@ namespace Gateway.Controllers
         public async Task<ActionResult> GetRidesForUser(Guid userId)
         {
             var response = await _mediator.Send(new GetRidesForUser.GetRidesForUserQuery(userId));
+            return Ok(response);
+        }
+
+        [HttpGet("confirmed-ride/{userId:Guid}")]
+        public async Task<ActionResult> GetConfirmedRide(Guid userId)
+        {
+            var response = await _mediator.Send(new GetConfirmedRide.GetConfirmedRideQuery(userId));
             return Ok(response);
         }
     }

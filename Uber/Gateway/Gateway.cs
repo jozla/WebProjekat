@@ -105,6 +105,8 @@ namespace Gateway
                             };
                         });
 
+                        builder.Services.AddSignalR();
+
                         var app = builder.Build();
                         if (app.Environment.IsDevelopment())
                         {
@@ -121,6 +123,8 @@ namespace Gateway
 
                         app.UseAuthentication();
                         app.UseAuthorization();
+
+                        app.MapHub<ChatHub>("/chatHub");
                         app.MapControllers();
 
                         return app;

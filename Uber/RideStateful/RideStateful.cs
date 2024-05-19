@@ -56,6 +56,30 @@ namespace RideStateful
             return rides;
         }
 
+        public async Task<RideModel> GetConfirmedRide(Guid userId)
+        {
+            var stateManager = this.StateManager;
+            var ridesDict = await stateManager.GetOrAddAsync<IReliableDictionary<Guid, RideModel>>("ridesDict");
+
+            using (var transaction = stateManager.CreateTransaction())
+            {
+                var enumerable = await ridesDict.CreateEnumerableAsync(transaction);
+                var enumerator = enumerable.GetAsyncEnumerator();
+
+                while (await enumerator.MoveNextAsync(CancellationToken.None))
+                {
+                    var currentRide = enumerator.Current.Value;
+                    if ((currentRide.PassengerId == userId || currentRide.DriverId == userId)
+                        && currentRide.Status == RideStatus.Confirmed)
+                    {
+                        return currentRide;
+                    }
+                }
+            }
+
+            return null;
+        }
+
         public async Task<IEnumerable<RideModel>> GetNewRides()
         {
             var stateManager = this.StateManager;
