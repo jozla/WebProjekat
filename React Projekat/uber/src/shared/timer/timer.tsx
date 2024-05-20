@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import styles from '../timer/timer.module.css';
+import { DecodeToken } from "../../services/token-decoder";
+import { finishRide } from "../../services/ride.service";
 
 export default function Timer() {
   const state = useLocation();
-  const { initialMinute , initialSeconds, arrivalMinute, arrivalSeconds } = state.state;
+  const { initialMinute , initialSeconds, arrivalMinute, arrivalSeconds, rideId, driverId } = state.state;
   const [minutes, setMinutes] = useState(initialMinute);
   const [seconds, setSeconds] = useState(initialSeconds);
   const [driverArrival, setDriverArrival] = useState(true);
@@ -23,7 +26,13 @@ export default function Timer() {
               setSeconds(arrivalSeconds);
               setDriverArrival(false);
             } else {
-              navigate("/user/dashboard");
+              if(DecodeToken().user_role == 'User' ){
+                navigate("/user/rate-user", {state: {driverId: driverId}})
+              }
+              else {
+                handleFinishRide();
+                navigate("/driver/dashboard");
+              }
             }
           } else {
             setMinutes(minutes - 1);
@@ -36,12 +45,20 @@ export default function Timer() {
       };
   });
 
+  const handleFinishRide = async() => {
+    let data = {
+      rideId : rideId
+    }
+    await finishRide(data);
+  }
+
   return (
-    <div>
-      <h1>
-        {" "}
-        {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
-      </h1>
-    </div>
+      <div className={styles.page}>
+        <h2>{driverArrival ? "Time until the ride starts:" : "Time until you arrive at the destination:"}</h2>
+        <h1>
+          {" "}
+          {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
+        </h1>
+      </div>
   );
 }

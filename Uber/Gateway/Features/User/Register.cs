@@ -11,7 +11,7 @@ namespace Gateway.Features.User
     {
         public record RegisterCommand(
              string UserName, string Email, string Password, string Name, string LastName,
-             DateOnly Birthday, string Address, UserRole Role, string Image) : ICommand;
+             string Birthday, string Address, UserRole Role, string Image) : ICommand;
 
         public class CommandHandler : ICommandHandler<RegisterCommand>
         {

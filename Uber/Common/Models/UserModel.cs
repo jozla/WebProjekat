@@ -19,7 +19,7 @@ namespace Common.Models
         [DataMember]
         public string LastName { get; set; } = string.Empty;
         [DataMember]
-        public DateOnly Birthday { get; set; }
+        public string Birthday { get; set; } = string.Empty;
         [DataMember]
         public string Address { get; set; } = string.Empty;
         [DataMember]

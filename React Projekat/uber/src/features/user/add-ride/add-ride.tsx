@@ -87,7 +87,7 @@ export function AddRide() {
                 />
                 <ErrorMessage name="endingPoint" component="div" className={styles.error} />
               </div>
-              <button type="submit" className={`btn btn-primary mt-3 ${styles.submitButton}`} disabled={!isValid || !dirty || isSubmitting}>
+              <button type="submit" className={`btn btn-dark mt-3 ${styles.submitButton}`} disabled={!isValid || !dirty || isSubmitting}>
                 Submit
               </button>
             </form>
@@ -97,7 +97,7 @@ export function AddRide() {
           <div className={`mt-3 ${styles.confirmRideDiv}`}>
             <p><span className={styles.bold}>Driver's arrival time:</span> {Math.floor(rideDetails.driverTimeInSeconds / 60)} minutes</p>
             <p><span className= {styles.bold}>Price:</span> ${rideDetails.price}</p>
-            <button className={`btn btn-primary ${styles.submitButton}`} onClick={confirmRide}>
+            <button className={`btn btn-dark ${styles.submitButton}`} onClick={confirmRide}>
               Confirm ride
             </button>
           </div>

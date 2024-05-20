@@ -5,10 +5,12 @@ import { Link, useNavigate } from "react-router-dom";
 import styles from '../login/login.module.css'
 import { DecodeToken } from "../../services/token-decoder";
 import { LoginFormValues } from "./login";
+import { useState } from "react";
 
 export default function LogIn() {
   const navigate = useNavigate();
-  
+  const [token,setToken] = useState(null);
+
   const initialValues: LoginFormValues = {
     email: "",
     password: "",
@@ -23,11 +25,11 @@ export default function LogIn() {
     
     try{
       var response = await login(values as LoginFormValues);
-      localStorage.setItem("access_token",JSON.stringify(response.token));
-      
-      //TODO
-      var decodedToken = DecodeToken();
-      decodedToken.user_role == 'User' ? navigate('user/dashboard') : navigate('driver/dashboard')
+      if(response.token){
+        localStorage.setItem("access_token",JSON.stringify(response.token));
+        var decodedToken = DecodeToken();
+        decodedToken.user_role == 'User' ? navigate('user/dashboard') : navigate('driver/dashboard')
+      }
     }
     catch{
       
@@ -62,7 +64,7 @@ export default function LogIn() {
                 />
                 <ErrorMessage name="password" component="div" className= {styles.field} />
               </div>
-              <button type="submit" className={`btn btn-primary mt-3 ${styles.submitButton}`} disabled={!isValid || !dirty}>
+              <button type="submit" className={`btn btn-dark mt-3 ${styles.submitButton}`} disabled={!isValid || !dirty}>
                 Submit
               </button>
             </form>

@@ -1,4 +1,4 @@
-﻿using Common.Enums;
+﻿using Common.Models;
 using Communication;
 using Gateway.CQRS;
 using MediatR;
@@ -11,7 +11,7 @@ namespace Gateway.Features.User
     {
         public record UpdateProfileCommand(
             Guid Id, string UserName, string Email, string OldPassword, string NewPassword, string Name, string LastName,
-            DateOnly Birthday, string Address, UserRole Role, string Image) : ICommand;
+            string Birthday, string Address, string Image) : ICommand;
 
         public class CommandHandler : ICommandHandler<UpdateProfileCommand>
         {
@@ -20,7 +20,7 @@ namespace Gateway.Features.User
                 var proxy = ServiceProxy.Create<IUserStatefulCommunication>(
                     new Uri("fabric:/Uber/UserStatefull"), new ServicePartitionKey(1));
 
-                var existingUser = await proxy.GetUserById(request.Id);
+                UserModel existingUser = await proxy.GetUserById(request.Id);
                 var isMatch = BCrypt.Net.BCrypt.Verify(request.OldPassword, existingUser.Password);
                 if (existingUser != null && isMatch)
                 {
@@ -31,7 +31,6 @@ namespace Gateway.Features.User
                     existingUser.LastName = request.LastName;
                     existingUser.Birthday = request.Birthday;
                     existingUser.Address = request.Address;
-                    existingUser.Role = request.Role;
                     existingUser.Image = request.Image;
 
                     await proxy.UpdateUser(existingUser);

@@ -1,45 +1,40 @@
 import { Formik, Field, ErrorMessage, FormikValues, FormikHelpers } from "formik";
 import * as Yup from "yup";
-import { register } from "../../services/user.service";
-import styles from "../register/register.module.css";
-import { useNavigate } from "react-router-dom";
-import { UserModel } from "../../shared/models/user";
+import { getUserById, updateProfile } from "../../services/user.service";
+import styles from '../update-profile/update-profile.module.css'
+import { useEffect, useState } from "react";
+import { DecodeToken } from "../../services/token-decoder";
+import { UpdateFormValues } from "./update";
 
-export default function Register() {
-  const navigate = useNavigate();
-  interface RegisterFormValues {
-    userName: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-    name: string;
-    lastName: string;
-    birthday: string;
-    address: string;
-    role: boolean;
-    image: string;
-  }
-  
-  const initialValues: RegisterFormValues = {
-    userName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    name: "",
-    lastName: "",
-    birthday: "",
-    address: "",
-    role: false,
-    image: "",
-  };
+export default function UpdateProfile() {
+    const [initialValues, setInitialValues] = useState<UpdateFormValues|null>(null);
+
+    useEffect(() => {
+        getUserData();
+    }, []);
+
+    const getUserData = async() => {
+        setInitialValues(null);
+        var response = await getUserById(DecodeToken().user_id);
+        setInitialValues({
+            id: response.user.id,
+            userName: response.user.userName,
+            email: response.user.email,
+            oldPassword: "",
+            newPassword: "",
+            name: response.user.name,
+            lastName: response.user.lastName,
+            birthday: response.user.birthday,
+            address: response.user.address,
+            image: response.user.image,
+        })
+    };
 
   const validationSchema = Yup.object().shape({
     userName: Yup.string().required("Username is required"),
     email: Yup.string().email("Invalid email").required("Email is required"),
-    password: Yup.string().required("Password is required"),
-    confirmPassword: Yup.string()
-    .oneOf([Yup.ref('password')], 'Passwords must match')
-    .required('Confirm Password is required'),
+    oldPassword: Yup.string().required("Password is required"),
+    newPassword: Yup.string().required('New Password is required'),
     name: Yup.string().required("Name is required"),
     lastName: Yup.string().required("Last name is required"),
     birthday: Yup.string().required("Date of birth is required").matches(/^\d{4}-\d{2}-\d{2}$/, "Date format must be yyyy-mm-dd"),
@@ -47,23 +42,25 @@ export default function Register() {
     image: Yup.string().required("Image is required"),
   });
 
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<RegisterFormValues>) => {
-    var role = values.role;
-    values.role = values.role ? 2 : 1;
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<UpdateFormValues>) => {
     try {
-      await register(values as UserModel);
-      navigate("/");
+      await updateProfile(values as UpdateFormValues);
+      getUserData();
     } catch {
-      values.role = role;
+      
     }
     setSubmitting(false);
   };
+
+  if (!initialValues) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className={styles.wrapper}>
       <div className={styles.form}>
         <h2 className="mb-4">Register</h2>
-        <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
+        <Formik initialValues={initialValues!} validationSchema={validationSchema} onSubmit={handleSubmit}>
           {({ isValid, dirty, errors, touched, handleSubmit }) => (
             <form onSubmit={handleSubmit}>
               <div className="form-group">
@@ -77,14 +74,14 @@ export default function Register() {
                 <ErrorMessage name="email" component="div" className={styles.error} />
               </div>
               <div className="form-group">
-                <label htmlFor="password">Password</label>
-                <Field type="password" className={`form-control ${styles.field} ${errors.password && touched.password ? styles.inputError : ""}`} name="password" placeholder="Password" />
-                <ErrorMessage name="password" component="div" className={styles.error} />
+                <label htmlFor="oldPassword">Old Password</label>
+                <Field type="text" className={`form-control ${styles.field} ${errors.oldPassword && touched.oldPassword ? styles.inputError : ""}`} name="oldPassword" placeholder="Old Password" />
+                <ErrorMessage name="oldPassword" component="div" className={styles.error} />
               </div>
               <div className="form-group">
-                <label htmlFor="confirmPassword">Confirm Password</label>
-                <Field type="text" className={`form-control ${styles.field} ${errors.confirmPassword && touched.confirmPassword ? styles.inputError : ""}`} name="confirmPassword" placeholder="Confirm Password" />
-                <ErrorMessage name="confirmPassword" component="div" className={styles.error} />
+                <label htmlFor="newPassword">New Password</label>
+                <Field type="text" className={`form-control ${styles.field} ${errors.newPassword && touched.newPassword ? styles.inputError : ""}`} name="newPassword" placeholder="New Password" />
+                <ErrorMessage name="newPassword" component="div" className={styles.error} />
               </div>
               <div className="form-group">
                 <label htmlFor="name">Name</label>
@@ -105,12 +102,6 @@ export default function Register() {
                 <label htmlFor="address">Address</label>
                 <Field type="text" className={`form-control ${styles.field} ${errors.address && touched.address ? styles.inputError : ""}`} name="address" placeholder="Enter address" />
                 <ErrorMessage name="address" component="div" className={styles.error} />
-              </div>
-              <div className="form-group">
-                <Field type="checkbox" className={`form-check-input`} name="role" />
-                <label htmlFor="role" className="form-check-label ms-2">
-                  Are you a driver?
-                </label>
               </div>
               <div className="form-group">
                 <label htmlFor="image">Profile Picture</label>

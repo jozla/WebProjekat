@@ -30,13 +30,15 @@ export default function WaitingPage() {
       navigate("/timer", {
         state: {
           initialMinute: 0,
-          initialSeconds: 10,
+          initialSeconds: 5,
           arrivalMinute: 0,
-          arrivalSeconds: 10,
+          arrivalSeconds: 5,
+          rideId: ride.id,
+          driverId: ride.driverId
         },
       });
     }
-  }, [ride]);
+  }, [ride, navigate]);
 
   const getRide = async () => {
     try {

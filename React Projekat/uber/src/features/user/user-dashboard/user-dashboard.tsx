@@ -4,6 +4,7 @@ import { DecodeToken } from "../../../services/token-decoder";
 import styles from "../user-dashboard/user-dashboard.module.css";
 import { useNavigate } from "react-router-dom";
 import { RideModel } from "../../../shared/models/ride";
+import { Header } from "../../../shared/header/header";
 
 export function UserDashboard() {
   const [rides, setRides] = useState<{ data: RideModel[] }>({ data: [] });
@@ -28,11 +29,13 @@ export function UserDashboard() {
   };
 
   return (
+    <>
+      <Header></Header>
     <div className={styles.wrapper}>
       <div className={styles.page}>
         <div className={`mb-3 ${styles.addButtonAndHeader}`}>
             <h1 className="mb-0">Your rides</h1>
-            <button onClick={handleAddRide} className="btn btn-primary">
+            <button onClick={handleAddRide} className="btn btn-dark">
             + Add New Ride
             </button>
         </div>
@@ -64,5 +67,6 @@ export function UserDashboard() {
         )}
       </div>
     </div>
+    </>
   );
 }

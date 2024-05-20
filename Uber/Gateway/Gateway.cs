@@ -1,7 +1,6 @@
 using Gateway.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
@@ -43,10 +42,7 @@ namespace Gateway
                                     .UseServiceFabricIntegration(listener, ServiceFabricIntegrationOptions.None)
                                     .UseUrls(url);
 
-                        builder.Services.AddControllers().AddJsonOptions(opt =>
-                        {
-                            opt.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
-                        });
+                        builder.Services.AddControllers();
 
                         builder.Services.AddEndpointsApiExplorer();
 
@@ -73,13 +69,6 @@ namespace Gateway
                                         }
                                     }, Array.Empty<string>()
                                 }
-                            });
-
-                            opt.MapType<DateOnly>(() => new OpenApiSchema
-                            {
-                                Type = "string",
-                                Format = "date",
-                                Example = new OpenApiString(DateTime.Today.ToString("yyyy-MM-dd"))
                             });
                         });
 

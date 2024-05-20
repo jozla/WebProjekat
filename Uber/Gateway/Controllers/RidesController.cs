@@ -35,7 +35,7 @@ namespace Gateway.Controllers
             return Ok();
         }
 
-        [HttpPut("finsih-ride")]
+        [HttpPut("finish-ride")]
         public async Task<ActionResult> FinishRide(FinishRide.FinishRideCommand request)
         {
             await _mediator.Send(request);

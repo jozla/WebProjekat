@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { RideModel } from "../../../shared/models/ride";
 import { DecodeToken } from "../../../services/token-decoder";
 import { HubConnectionBuilder } from "@microsoft/signalr";
+import { Header } from "../../../shared/header/header";
 
 export function DriverDashboard() {
   const [rides, setRides] = useState<{ data: RideModel[] }>({ data: [] });
@@ -75,24 +76,28 @@ export function DriverDashboard() {
       navigate("/timer", {
         state: {
           initialMinute: 0,
-          initialSeconds: 10,
+          initialSeconds: 5,
           arrivalMinute: 0,
-          arrivalSeconds: 10,
+          arrivalSeconds: 5,
+          rideId: ride.id,
+          driverId: ride.driverId
         },
       });
     }
-  }, [ride]);
+  }, [ride, navigate]);
 
   const handleSeePreviousRides = () => {
     navigate("/driver/previous-rides");
   };
 
   return (
+    <>
+    <Header></Header>
     <div className={styles.wrapper}>
       <div className={styles.page}>
         <div className={`mb-3 ${styles.previousButtonAndHeader}`}>
           <h1 className="mb-0">New available rides</h1>
-          <button onClick={handleSeePreviousRides} className="btn btn-primary">
+          <button onClick={handleSeePreviousRides} className="btn btn-dark">
             Your previous rides
           </button>
         </div>
@@ -128,5 +133,6 @@ export function DriverDashboard() {
         )}
       </div>
     </div>
+    </>
   );
 }
