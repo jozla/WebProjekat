@@ -10,6 +10,8 @@ import WaitingPage from './features/user/waiting/waiting-page';
 import Timer from './shared/timer/timer';
 import RateUser from './features/user/rate/rate';
 import UpdateProfile from './features/update-profile/update-profile';
+import AdminDashboard from './features/admin/admin-dashboard/admin-dashboard';
+import { Rides } from './features/admin/rides/rides';
 
 function App() {
   return (
@@ -18,13 +20,15 @@ function App() {
       <Route path="/" element={<LogIn />}/>
       <Route path="register" element={<Register />} />
       <Route path="update-profile" element={<UpdateProfile />} />
+      <Route path="timer" element={<Timer />} />
       <Route path="user/dashboard" element={<UserDashboard />} />
       <Route path="user/add-ride" element={<AddRide />} />
       <Route path="user/waiting-page" element={<WaitingPage />} />
       <Route path="user/rate-user" element={<RateUser />} />
       <Route path="driver/dashboard" element={<DriverDashboard />} />
       <Route path="driver/previous-rides" element={<PreviousRides />} />
-      <Route path="timer" element={<Timer />} />
+      <Route path="admin/dashboard" element={<AdminDashboard />} />
+      <Route path="admin/rides" element={<Rides />} />
     </Routes>
   </BrowserRouter>
   );

@@ -15,7 +15,13 @@ export function Header(){
     }
 
     const handleBackToHome = () => {
-        DecodeToken().user_role == 'User' ? navigate('/user/dashboard'):navigate('/driver/dashboard')
+        if (DecodeToken().user_role == 'User') {
+            navigate('/user/dashboard');
+          } else if (DecodeToken().user_role == 'Driver') {
+              navigate('/driver/dashboard');
+          } else if (DecodeToken().user_role == 'Admin') {
+              navigate('/admin/dashboard');
+          }
     }
     
     return(

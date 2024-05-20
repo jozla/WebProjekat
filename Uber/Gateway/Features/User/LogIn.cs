@@ -52,6 +52,7 @@ namespace Gateway.Features.User
                 {
                 new Claim("user_id", user.Id.ToString()),
                 new Claim("user_role", user.Role.ToString()),
+                new Claim("verification", user.VerificationState.ToString()),
                 };
 
                 var token = new JwtSecurityToken(

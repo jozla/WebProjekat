@@ -3,6 +3,7 @@ import { getPreviousRidesForDriver } from "../../../services/ride.service";
 import { DecodeToken } from "../../../services/token-decoder";
 import styles from "../previous-rides/previous-rides.module.css";
 import { RideModel } from "../../../shared/models/ride";
+import { Header } from "../../../shared/header/header";
 
 export function PreviousRides() {
   const [rides, setRides] = useState<{ data: RideModel[] }>({ data: [] });
@@ -21,6 +22,8 @@ export function PreviousRides() {
   }, []);
 
   return (
+    <>
+    <Header></Header>
     <div className={styles.wrapper}>
       <div className={styles.page}>
         <h1 className="mb-4">Your previous rides</h1>
@@ -53,5 +56,6 @@ export function PreviousRides() {
         )}
       </div>
     </div>
+    </>
   );
 }

@@ -7,7 +7,7 @@ export interface UserModel {
   lastName: string;
   birthday: string;
   address: string;
-  userType: number;
+  role: number;
   image: string;
   verificationState: number;
 }

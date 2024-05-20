@@ -1,3 +1,4 @@
+using Common.Enums;
 using Common.Models;
 using Communication;
 using Microsoft.ServiceFabric.Data.Collections;
@@ -18,12 +19,12 @@ namespace UserStatefull
         { }
 
         #region UserMethods
-        public async Task<IEnumerable<UserModel>> GetAllUsers()
+        public async Task<IEnumerable<UserModel>> GetAllDrivers()
         {
             var stateManager = this.StateManager;
             var usersDict = await stateManager.GetOrAddAsync<IReliableDictionary<Guid, UserModel>>("usersDict");
 
-            var users = new List<UserModel>();
+            var drivers = new List<UserModel>();
 
             using (var transaction = stateManager.CreateTransaction())
             {
@@ -32,11 +33,14 @@ namespace UserStatefull
 
                 while (await enumerator.MoveNextAsync(default))
                 {
-                    users.Add(enumerator.Current.Value);
+                    if (enumerator.Current.Value.Role == UserRole.Driver)
+                    {
+                        drivers.Add(enumerator.Current.Value);
+                    }
                 }
             }
 
-            return users;
+            return drivers;
         }
 
         public async Task<UserModel> GetUserByEmail(string email)

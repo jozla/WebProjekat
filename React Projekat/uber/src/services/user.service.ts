@@ -40,3 +40,31 @@ export const getUserById = async (userId: string) => {
     throw error;
   }
 };
+
+export const getAllDrivers = async () => {
+  try {
+    const response = await axiosInstance.get('/users/get-drivers');
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    throw error;
+  }
+};
+
+export const verifyUser = async (data:any) => {
+  try {
+   await axiosInstance.post('/users/verify', data);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    throw error;
+  }
+};
+
+export const blockUser = async (data:any) => {
+  try {
+   await axiosInstance.post('/users/block', data);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    throw error;
+  }
+};

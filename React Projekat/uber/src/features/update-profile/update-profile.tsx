@@ -5,6 +5,7 @@ import styles from '../update-profile/update-profile.module.css'
 import { useEffect, useState } from "react";
 import { DecodeToken } from "../../services/token-decoder";
 import { UpdateFormValues } from "./update";
+import { Header } from "../../shared/header/header";
 
 export default function UpdateProfile() {
     const [initialValues, setInitialValues] = useState<UpdateFormValues|null>(null);
@@ -57,6 +58,8 @@ export default function UpdateProfile() {
   }
 
   return (
+    <>
+    <Header></Header>
     <div className={styles.wrapper}>
       <div className={styles.form}>
         <h2 className="mb-4">Register</h2>
@@ -116,5 +119,6 @@ export default function UpdateProfile() {
         </Formik>
       </div>
     </div>
+    </>
   );
 }

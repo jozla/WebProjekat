@@ -6,19 +6,19 @@ using Microsoft.ServiceFabric.Services.Remoting.Client;
 
 namespace Gateway.Features.User
 {
-    public class GetAllUsers
+    public class GetAllDrivers
     {
-        public record GetAllUsersQuery() : IQuery<GetAllUsersResponse>;
-        public record GetAllUsersResponse(IEnumerable<GetUserDto> Users);
+        public record GetAllDriversQuery() : IQuery<GetAllDriversResponse>;
+        public record GetAllDriversResponse(IEnumerable<GetUserDto> Drivers);
 
-        public class QueryHandler : IQueryHandler<GetAllUsersQuery, GetAllUsersResponse>
+        public class QueryHandler : IQueryHandler<GetAllDriversQuery, GetAllDriversResponse>
         {
-            public async Task<GetAllUsersResponse> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
+            public async Task<GetAllDriversResponse> Handle(GetAllDriversQuery request, CancellationToken cancellationToken)
             {
                 var proxy = ServiceProxy.Create<IUserStatefulCommunication>(
                     new Uri("fabric:/Uber/UserStatefull"), new ServicePartitionKey(1));
 
-                var users = await proxy.GetAllUsers();
+                var users = await proxy.GetAllDrivers();
 
 
                 var userDtos = users.Select(user => new GetUserDto
@@ -35,7 +35,7 @@ namespace Gateway.Features.User
                     VerificationState = user.VerificationState
                 });
 
-                return new GetAllUsersResponse(userDtos);
+                return new GetAllDriversResponse(userDtos);
             }
         }
     }

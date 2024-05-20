@@ -38,11 +38,11 @@ namespace Gateway.Controllers
             return Ok();
         }
 
-        [HttpGet]
+        [HttpGet("get-drivers")]
         [Authorize]
-        public async Task<ActionResult> GetAllUsers()
+        public async Task<ActionResult> GetAllDrivers()
         {
-            var response = await _mediator.Send(new GetAllUsers.GetAllUsersQuery());
+            var response = await _mediator.Send(new GetAllDrivers.GetAllDriversQuery());
             return Ok(response);
         }
 

@@ -8,7 +8,7 @@ namespace Communication
         Task Register(UserModel user);
         Task<UserModel> GetUserByEmail(string email);
         Task<UserModel> GetUserById(Guid id);
-        Task<IEnumerable<UserModel>> GetAllUsers();
+        Task<IEnumerable<UserModel>> GetAllDrivers();
         Task UpdateUser(UserModel user);
     }
 }

@@ -6,6 +6,7 @@ import { useState } from "react";
 import { addRide } from "../../../services/ride.service";
 import { RideModel } from "../../../shared/models/ride";
 import { useNavigate } from "react-router-dom";
+import { Header } from "../../../shared/header/header";
 
 export function AddRide() {
   const [rideDetails, setRideDetails] = useState<RideModel|null>(null);
@@ -61,6 +62,8 @@ export function AddRide() {
   };
 
   return (
+    <>
+    <Header></Header>
     <div className={styles.wrapper}>
       <div className={styles.form}>
         <h2 className="mb-4">Chose your ride now!</h2>
@@ -104,5 +107,6 @@ export function AddRide() {
         )}
       </div>
     </div>
+    </>
   );
 }

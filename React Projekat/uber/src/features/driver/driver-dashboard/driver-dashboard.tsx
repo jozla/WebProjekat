@@ -20,8 +20,8 @@ export function DriverDashboard() {
     connection
       .start()
       .then(() => {
-        console.log("Connected to SignalR hub")
-        connection.invoke("JoinGroup", "Driver")
+        console.log("Connected to SignalR hub");
+        connection.invoke("JoinGroup", "Driver");
       })
       .catch((err) => console.error("Error connecting to hub:", err));
 
@@ -34,8 +34,7 @@ export function DriverDashboard() {
     try {
       var response = await getNewRides();
       setRides({ data: response.rides });
-    }
-    catch{
+    } catch {
       console.log("Error getting new rides");
     }
   };
@@ -80,7 +79,7 @@ export function DriverDashboard() {
           arrivalMinute: 0,
           arrivalSeconds: 5,
           rideId: ride.id,
-          driverId: ride.driverId
+          driverId: ride.driverId,
         },
       });
     }
@@ -92,47 +91,52 @@ export function DriverDashboard() {
 
   return (
     <>
-    <Header></Header>
-    <div className={styles.wrapper}>
-      <div className={styles.page}>
-        <div className={`mb-3 ${styles.previousButtonAndHeader}`}>
-          <h1 className="mb-0">New available rides</h1>
-          <button onClick={handleSeePreviousRides} className="btn btn-dark">
-            Your previous rides
-          </button>
+      <Header></Header>
+      {DecodeToken().verification === "Processing" || DecodeToken().verification === "Unverified" ? (
+        <div>
+          <h2>You are account is not verified or is blocked...</h2>
         </div>
-
-        {rides.data.length === 0 ? (
-          <div>
-            <p>There are no new rides...</p>
+      ) : (
+        <div className={styles.wrapper}>
+          <div className={styles.page}>
+            <div className={`mb-3 ${styles.previousButtonAndHeader}`}>
+              <h1 className="mb-0">New available rides</h1>
+              <button onClick={handleSeePreviousRides} className="btn btn-dark">
+                Your previous rides
+              </button>
+            </div>
+            {rides.data.length === 0 ? (
+              <div>
+                <p>There are no new rides...</p>
+              </div>
+            ) : (
+              <table className={`table table-striped ${styles.table}`}>
+                <thead>
+                  <tr>
+                    <th>Starting Point</th>
+                    <th>Ending Point</th>
+                    <th>Time to Reach - min</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rides.data.map((row, i) => (
+                    <tr key={i}>
+                      <td>{row.startingPoint}</td>
+                      <td>{row.endingPoint}</td>
+                      <td>{Math.floor(row.driverTimeInSeconds / 60)}</td>
+                      <td>
+                        <button onClick={() => handleConfirmRide(row.id)} className="btn btn-success">
+                          Confirm
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
-        ) : (
-          <table className={`table table-striped ${styles.table}`}>
-            <thead>
-              <tr>
-                <th>Starting Point</th>
-                <th>Ending Point</th>
-                <th>Time to Reach - min</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rides.data.map((row, i) => (
-                <tr key={i}>
-                  <td>{row.startingPoint}</td>
-                  <td>{row.endingPoint}</td>
-                  <td>{Math.floor(row.driverTimeInSeconds / 60)}</td>
-                  <td>
-                    <button onClick={() => handleConfirmRide(row.id)} className="btn btn-success">
-                      Confirm
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-    </div>
+        </div>
+      )}
     </>
   );
 }
