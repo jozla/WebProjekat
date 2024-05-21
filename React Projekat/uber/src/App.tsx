@@ -12,6 +12,8 @@ import RateUser from './features/user/rate/rate';
 import UpdateProfile from './features/update-profile/update-profile';
 import AdminDashboard from './features/admin/admin-dashboard/admin-dashboard';
 import { Rides } from './features/admin/rides/rides';
+import RequireRole from './shared/guard/require-role';
+import RequireAuth from './shared/guard/require-auth';
 
 function App() {
   return (
@@ -19,16 +21,16 @@ function App() {
     <Routes>
       <Route path="/" element={<LogIn />}/>
       <Route path="register" element={<Register />} />
-      <Route path="update-profile" element={<UpdateProfile />} />
-      <Route path="timer" element={<Timer />} />
-      <Route path="user/dashboard" element={<UserDashboard />} />
-      <Route path="user/add-ride" element={<AddRide />} />
-      <Route path="user/waiting-page" element={<WaitingPage />} />
-      <Route path="user/rate-user" element={<RateUser />} />
-      <Route path="driver/dashboard" element={<DriverDashboard />} />
-      <Route path="driver/previous-rides" element={<PreviousRides />} />
-      <Route path="admin/dashboard" element={<AdminDashboard />} />
-      <Route path="admin/rides" element={<Rides />} />
+      <Route path="update-profile" element={<RequireAuth><UpdateProfile /></RequireAuth>} />
+      <Route path="timer" element={<RequireAuth><Timer /></RequireAuth>} />
+      <Route path="user/dashboard" element={<RequireRole role="User"><UserDashboard /></RequireRole>} />
+      <Route path="user/add-ride" element={<RequireRole role="User"><AddRide /></RequireRole>} />
+      <Route path="user/waiting-page" element={<RequireRole role="User"><WaitingPage /></RequireRole>} />
+      <Route path="user/rate-user" element={<RequireRole role="User"><RateUser /></RequireRole>} />
+      <Route path="driver/dashboard" element={<RequireRole role="Driver"><DriverDashboard /></RequireRole>} />
+      <Route path="driver/previous-rides" element={<RequireRole role="Driver"><PreviousRides /></RequireRole>} />
+      <Route path="admin/dashboard" element={<RequireRole role="Admin"><AdminDashboard /></RequireRole>} />
+      <Route path="admin/rides" element={<RequireRole role="Admin"><Rides /></RequireRole>} />
     </Routes>
   </BrowserRouter>
   );

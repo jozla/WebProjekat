@@ -6,18 +6,39 @@ import { finishRide } from "../../services/ride.service";
 
 export default function Timer() {
   const state = useLocation();
-  const { initialMinute , initialSeconds, arrivalMinute, arrivalSeconds, rideId, driverId } = state.state;
+  const [initialMinute, setInitialMinute] = useState<number|null>(null);
+  const [initialSeconds, setInitialSeconds] = useState<number|null>(null);
+  const [arrivalMinute, setArrivalMinute] = useState(null);
+  const [arrivalSeconds, setArrivalSeconds] = useState(null);
+  const [rideId, setRideId] = useState(null);
+  const [driverId, setDriverId] = useState(null);
   const [minutes, setMinutes] = useState(initialMinute);
   const [seconds, setSeconds] = useState(initialSeconds);
   const [driverArrival, setDriverArrival] = useState(true);
 
 
   const navigate = useNavigate();
+  const anyValueIsNull = [initialMinute, initialSeconds, arrivalMinute, arrivalSeconds, rideId, driverId].some(value => value === null);
 
   useEffect(() => {
+    if (state.state) {
+      const { initialMinute, initialSeconds, arrivalMinute, arrivalSeconds, rideId, driverId } = state.state;
+      setInitialMinute(initialMinute);
+      setInitialSeconds(initialSeconds);
+      setArrivalMinute(arrivalMinute);
+      setArrivalSeconds(arrivalSeconds);
+      setRideId(rideId);
+      setDriverId(driverId);
+      setMinutes(initialMinute);
+      setSeconds(initialSeconds);
+    }
+  }, [state.state]);
+
+  useEffect(() => {
+    if (anyValueIsNull) return;
     let myInterval = setInterval(() => {
-        if (seconds > 0) {
-          setSeconds(seconds - 1);
+        if (seconds! > 0) {
+          setSeconds(seconds! - 1);
         }
         if (seconds === 0) {
           if (minutes === 0) {
@@ -35,7 +56,7 @@ export default function Timer() {
               }
             }
           } else {
-            setMinutes(minutes - 1);
+            setMinutes(minutes! - 1);
             setSeconds(59);
           }
         }
@@ -52,12 +73,20 @@ export default function Timer() {
     await finishRide(data);
   }
 
+  if (anyValueIsNull) {
+    return (
+      <div className={styles.page}>
+        <h2>You can't access the timer now...</h2>
+      </div>
+    );
+  }
+
   return (
       <div className={styles.page}>
         <h2>{driverArrival ? "Time until the ride starts:" : "Time until you arrive at the destination:"}</h2>
         <h1>
           {" "}
-          {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
+          {minutes}:{seconds! < 10 ? `0${seconds}` : seconds}
         </h1>
       </div>
   );
