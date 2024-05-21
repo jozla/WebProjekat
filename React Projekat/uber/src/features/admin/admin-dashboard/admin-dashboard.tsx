@@ -4,6 +4,7 @@ import styles from "../admin-dashboard/admin-dashboard.module.css";
 import { useEffect, useState } from "react";
 import { UserModel } from "../../../shared/models/user";
 import { blockUser, getAllDrivers, verifyUser } from "../../../services/user.service";
+import { getRating } from "../../../services/rating.service";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -45,7 +46,13 @@ export default function AdminDashboard() {
   };
 
   const seeRating = async(userId: string) => {
-    console.log('Checking rating...')
+    try{
+      var response = await getRating(userId);
+      alert('This user\'s rating is: '+ response.rating.toFixed(1))
+    }
+    catch{
+      console.log('Error getting rating');
+    }
   }
 
   return (

@@ -26,7 +26,7 @@ export default function Timer() {
               setSeconds(arrivalSeconds);
               setDriverArrival(false);
             } else {
-              if(DecodeToken().user_role == 'User' ){
+              if(DecodeToken()!.user_role === 'User'){
                 navigate("/user/rate-user", {state: {driverId: driverId}})
               }
               else {

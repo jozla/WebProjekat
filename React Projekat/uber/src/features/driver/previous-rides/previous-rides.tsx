@@ -9,7 +9,7 @@ export function PreviousRides() {
   const [rides, setRides] = useState<{ data: RideModel[] }>({ data: [] });
   const getRides = async () => {
     try{
-      var response = await getPreviousRidesForDriver(DecodeToken().user_id);
+      var response = await getPreviousRidesForDriver(DecodeToken()!.user_id);
       setRides({ data: response.rides });
     }
     catch{

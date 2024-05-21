@@ -41,7 +41,7 @@ export function AddRide() {
       endingPoint: values.endingPoint,
       price: price,
       driverTimeInSeconds: driverTime,
-      passengerId: DecodeToken().user_id,
+      passengerId: DecodeToken()!.user_id,
     };
     setRideDetails(rideData as RideModel);
     setSubmitting(false);

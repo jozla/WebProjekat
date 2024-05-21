@@ -16,7 +16,7 @@ export default function UpdateProfile() {
 
     const getUserData = async() => {
         setInitialValues(null);
-        var response = await getUserById(DecodeToken().user_id);
+        var response = await getUserById(DecodeToken()!.user_id);
         setInitialValues({
             id: response.user.id,
             userName: response.user.userName,

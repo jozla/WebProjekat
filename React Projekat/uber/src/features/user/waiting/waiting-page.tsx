@@ -42,7 +42,7 @@ export default function WaitingPage() {
 
   const getRide = async () => {
     try {
-      var response = await getConfirmedRide(DecodeToken().user_id);
+      var response = await getConfirmedRide(DecodeToken()!.user_id);
       setRide(response.ride as RideModel);
     } catch {
       console.log("Error getting new rides");

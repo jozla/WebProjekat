@@ -15,11 +15,11 @@ export function Header(){
     }
 
     const handleBackToHome = () => {
-        if (DecodeToken().user_role == 'User') {
+        if (DecodeToken()!.user_role == 'User') {
             navigate('/user/dashboard');
-          } else if (DecodeToken().user_role == 'Driver') {
+          } else if (DecodeToken()!.user_role == 'Driver') {
               navigate('/driver/dashboard');
-          } else if (DecodeToken().user_role == 'Admin') {
+          } else if (DecodeToken()!.user_role == 'Admin') {
               navigate('/admin/dashboard');
           }
     }

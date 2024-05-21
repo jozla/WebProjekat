@@ -7,5 +7,14 @@ interface TokenPayload {
   }
 
 export function DecodeToken(){
-    return jwtDecode<TokenPayload>(localStorage.getItem('access_token')!)
+    if(!localStorage.getItem('access_token')){
+      return null
+    }
+    var token = jwtDecode<TokenPayload>(localStorage.getItem('access_token')!);
+    if(token){
+      return token; 
+    }
+    else{
+      return null;
+    }
 }

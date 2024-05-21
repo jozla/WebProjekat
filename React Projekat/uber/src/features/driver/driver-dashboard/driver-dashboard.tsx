@@ -46,7 +46,7 @@ export function DriverDashboard() {
 
   const handleConfirmRide = async (id: string) => {
     try {
-      var decodedToken = DecodeToken();
+      var decodedToken = DecodeToken()!;
       var data = {
         rideId: id,
         driverId: decodedToken.user_id,
@@ -62,7 +62,7 @@ export function DriverDashboard() {
 
   const getRide = async () => {
     try {
-      var response = await getConfirmedRide(DecodeToken().user_id);
+      var response = await getConfirmedRide(DecodeToken()!.user_id);
       setRide(response.ride as RideModel);
     } catch {
       console.log("Error getting new rides");
@@ -92,7 +92,7 @@ export function DriverDashboard() {
   return (
     <>
       <Header></Header>
-      {DecodeToken().verification === "Processing" || DecodeToken().verification === "Unverified" ? (
+      {DecodeToken()!.verification === "Processing" || DecodeToken()!.verification === "Unverified" ? (
         <div>
           <h2>You are account is not verified or is blocked...</h2>
         </div>

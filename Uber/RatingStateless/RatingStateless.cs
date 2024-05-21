@@ -33,7 +33,8 @@ namespace RatingStateless
                 {
                     Id = Guid.NewGuid(),
                     Rating = rating,
-                    UserId = userId
+                    UserId = userId,
+                    NumOfRates = 1
                 };
 
                 await _ratingDbContext.Ratings.AddAsync(newRating);

@@ -9,7 +9,6 @@ import { useState } from "react";
 
 export default function LogIn() {
   const navigate = useNavigate();
-  const [token,setToken] = useState(null);
 
   const initialValues: LoginFormValues = {
     email: "",
@@ -27,7 +26,7 @@ export default function LogIn() {
       var response = await login(values as LoginFormValues);
       if(response.token){
         localStorage.setItem("access_token",JSON.stringify(response.token));
-        var decodedToken = DecodeToken();
+        var decodedToken = DecodeToken()!;
         if (decodedToken.user_role == 'User') {
           navigate('user/dashboard');
         } else if (decodedToken.user_role == 'Driver') {
