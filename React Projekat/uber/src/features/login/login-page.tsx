@@ -1,11 +1,13 @@
 import { Formik, Field, ErrorMessage, FormikValues, FormikHelpers } from "formik";
 import * as Yup from "yup";
-import { login } from "../../services/user.service";
+import { login, register } from "../../services/user.service";
 import { Link, useNavigate } from "react-router-dom";
-import styles from '../login/login.module.css'
+import styles from "../login/login.module.css";
 import { DecodeToken } from "../../services/token-decoder";
 import { LoginFormValues } from "./login";
-import { useState } from "react";
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
+import { UserModel } from "../../shared/models/user";
 
 export default function LogIn() {
   const navigate = useNavigate();
@@ -21,25 +23,55 @@ export default function LogIn() {
   });
 
   const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<LoginFormValues>) => {
-    
-    try{
+    try {
       var response = await login(values as LoginFormValues);
-      if(response.token){
-        localStorage.setItem("access_token",JSON.stringify(response.token));
+      if (response.token) {
+        localStorage.setItem("access_token", JSON.stringify(response.token));
         var decodedToken = DecodeToken()!;
-        if (decodedToken.user_role == 'User') {
-          navigate('user/dashboard');
-        } else if (decodedToken.user_role == 'Driver') {
-            navigate('driver/dashboard');
-        } else if (decodedToken.user_role == 'Admin') {
-            navigate('admin/dashboard');
+        if (decodedToken.user_role == "User") {
+          navigate("user/dashboard");
+        } else if (decodedToken.user_role == "Driver") {
+          navigate("driver/dashboard");
+        } else if (decodedToken.user_role == "Admin") {
+          navigate("admin/dashboard");
         }
       }
-    }
-    catch{
-      
-    }
+    } catch {}
     setSubmitting(false);
+  };
+
+  interface TokenPayload {
+    given_name: string;
+    family_name: string;
+    email: string;
+  }
+  
+  const googleLogIn = (token: string) => {
+    localStorage.setItem("access_token", JSON.stringify(token));
+    navigate("user/dashboard");
+  }
+
+  const responseMessage = async (response) => {
+    var decodedToken = jwtDecode<TokenPayload>(response.credential);
+    var response = await login({ email: decodedToken.email, password: "" });
+    if (response.token) {
+      googleLogIn(response.token);
+    } else {
+      var data = {
+        userName: decodedToken.email,
+        email: decodedToken.email,
+        password: "",
+        name: decodedToken.given_name,
+        lastName: decodedToken.family_name,
+        birthday: "",
+        address: "",
+        role: 1,
+        image: "",
+      };
+      await register(data as UserModel);
+      var response = await login({ email: decodedToken.email, password: "" });
+      googleLogIn(response.token);
+    }
   };
 
   return (
@@ -51,23 +83,13 @@ export default function LogIn() {
             <form onSubmit={handleSubmit}>
               <div className="form-group">
                 <label htmlFor="email">Email address</label>
-                <Field
-                  type="email"
-                  className={`form-control ${styles.field} ${errors.email && touched.email ? styles.inputError : ""}`}
-                  name="email"
-                  placeholder="Enter email"
-                />
+                <Field type="email" className={`form-control ${styles.field} ${errors.email && touched.email ? styles.inputError : ""}`} name="email" placeholder="Enter email" />
                 <ErrorMessage name="email" component="div" className={styles.error} />
               </div>
               <div className="form-group">
                 <label htmlFor="password">Password</label>
-                <Field
-                  type="password"
-                  className={`form-control  ${styles.field} ${errors.password && touched.password ? styles.inputError : ""}`}
-                  name="password"
-                  placeholder="Password"
-                />
-                <ErrorMessage name="password" component="div" className= {styles.field} />
+                <Field type="password" className={`form-control  ${styles.field} ${errors.password && touched.password ? styles.inputError : ""}`} name="password" placeholder="Password" />
+                <ErrorMessage name="password" component="div" className={styles.field} />
               </div>
               <button type="submit" className={`btn btn-dark mt-3 ${styles.submitButton}`} disabled={!isValid || !dirty}>
                 Submit
@@ -75,7 +97,11 @@ export default function LogIn() {
             </form>
           )}
         </Formik>
-        <p>Don't have account? Sign in <Link to='/register'>here</Link></p>
+        <p>
+          Don't have account? Sign in <Link to="/register">here</Link>
+        </p>
+        <br />
+        <GoogleLogin onSuccess={responseMessage} />
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { DecodeToken } from "../../services/token-decoder";
 import styles from '../header/header.module.css';
+import { googleLogout } from "@react-oauth/google";
 
 export function Header(){
     const navigate = useNavigate();
@@ -11,6 +12,7 @@ export function Header(){
 
     const handleLogout = () => {
         localStorage.clear();
+        googleLogout();
         navigate('/');
     }
 

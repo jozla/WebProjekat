@@ -4,7 +4,7 @@ interface TokenPayload {
     user_role: string;
     user_id: string;
     verification: string;
-  }
+}
 
 export function DecodeToken(){
     if(!localStorage.getItem('access_token')){
