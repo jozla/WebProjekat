@@ -17,11 +17,11 @@ export function Header(){
     }
 
     const handleBackToHome = () => {
-        if (DecodeToken()!.user_role == 'User') {
+        if (DecodeToken()!.user_role === 'User') {
             navigate('/user/dashboard');
-          } else if (DecodeToken()!.user_role == 'Driver') {
+          } else if (DecodeToken()!.user_role === 'Driver') {
               navigate('/driver/dashboard');
-          } else if (DecodeToken()!.user_role == 'Admin') {
+          } else if (DecodeToken()!.user_role === 'Admin') {
               navigate('/admin/dashboard');
           }
     }
@@ -29,11 +29,12 @@ export function Header(){
     return(
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <span className={`navbar-brand ${styles.home} ${styles.link}`} onClick={handleBackToHome}>UBER</span>
+        <span className={`nav-item nav-link disabled ${styles.status} ms-4`}>{DecodeToken()?.verification}</span>
         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div className="navbar-nav">
+            <div className="navbar-nav ms-auto">
                 <span className={`nav-item nav-link ${styles.link}`} onClick={handleUpdateProfile}>Update Profile</span>
                 <span className={`nav-item nav-link ${styles.link}`} onClick={handleLogout}>Logout</span>
             </div>

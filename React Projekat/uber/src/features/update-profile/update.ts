@@ -8,5 +8,5 @@ export interface UpdateFormValues {
     lastName: string;
     birthday: string;
     address: string;
-    image: string;
+    image: any;
   }

@@ -3,9 +3,9 @@ import { UpdateFormValues } from "../features/update-profile/update";
 import { UserModel } from "../shared/models/user";
 import axiosInstance from "./axios-interceptor";
 
-export const login = async (data:LoginFormValues) => {
+export const login = async (data: LoginFormValues) => {
   try {
-    const response = await axiosInstance.post('/users/login', data);
+    const response = await axiosInstance.post("/users/login", data);
     return response.data;
   } catch (error) {
     console.error("Error fetching users:", error);
@@ -13,18 +13,34 @@ export const login = async (data:LoginFormValues) => {
   }
 };
 
-export const register = async (data:UserModel) => {
-    try {
-      await axiosInstance.post('/users', data);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      throw error;
-    }
+export const register = async (data: UserModel) => {
+  try {
+    var formData = new FormData();
+    Object.keys(data).forEach((key) => {
+      formData.append(key, data[key]);
+    });
+    await axiosInstance.post("/users", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    throw error;
+  }
 };
 
-export const updateProfile = async (data:UpdateFormValues) => {
+export const updateProfile = async (data: UpdateFormValues) => {
   try {
-    await axiosInstance.put('/users', data);
+    var formData = new FormData();
+    Object.keys(data).forEach((key) => {
+      formData.append(key, data[key]);
+    });
+    await axiosInstance.put("/users", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   } catch (error) {
     console.error("Error fetching users:", error);
     throw error;
@@ -33,7 +49,7 @@ export const updateProfile = async (data:UpdateFormValues) => {
 
 export const getUserById = async (userId: string) => {
   try {
-    const response = await axiosInstance.get('/users/' + userId);
+    const response = await axiosInstance.get("/users/" + userId);
     return response.data;
   } catch (error) {
     console.error("Error fetching users:", error);
@@ -43,7 +59,7 @@ export const getUserById = async (userId: string) => {
 
 export const getAllDrivers = async () => {
   try {
-    const response = await axiosInstance.get('/users/get-drivers');
+    const response = await axiosInstance.get("/users/get-drivers");
     return response.data;
   } catch (error) {
     console.error("Error fetching users:", error);
@@ -51,18 +67,18 @@ export const getAllDrivers = async () => {
   }
 };
 
-export const verifyUser = async (data:any) => {
+export const verifyUser = async (data: any) => {
   try {
-   await axiosInstance.post('/users/verify', data);
+    await axiosInstance.post("/users/verify", data);
   } catch (error) {
     console.error("Error fetching users:", error);
     throw error;
   }
 };
 
-export const blockUser = async (data:any) => {
+export const blockUser = async (data: any) => {
   try {
-   await axiosInstance.post('/users/block', data);
+    await axiosInstance.post("/users/block", data);
   } catch (error) {
     console.error("Error fetching users:", error);
     throw error;

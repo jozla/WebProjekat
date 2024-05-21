@@ -11,7 +11,7 @@ namespace Gateway.Features.User
     {
         public record UpdateProfileCommand(
             Guid Id, string UserName, string Email, string OldPassword, string NewPassword, string Name, string LastName,
-            string Birthday, string Address, string Image) : ICommand;
+            string Birthday, string Address, IFormFile Image) : ICommand;
 
         public class CommandHandler : ICommandHandler<UpdateProfileCommand>
         {
@@ -31,7 +31,16 @@ namespace Gateway.Features.User
                     existingUser.LastName = request.LastName;
                     existingUser.Birthday = request.Birthday;
                     existingUser.Address = request.Address;
-                    existingUser.Image = request.Image;
+
+                    var imageFileName = $"{request.Image.FileName}";
+                    var imagePath = Path.Combine("wwwroot", "images", imageFileName);
+
+                    using (var imageStream = new FileStream(imagePath, FileMode.Create))
+                    {
+                        await request.Image.CopyToAsync(imageStream);
+                    }
+
+                    existingUser.Image = imageFileName;
 
                     await proxy.UpdateUser(existingUser);
                 }

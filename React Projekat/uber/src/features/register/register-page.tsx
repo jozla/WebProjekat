@@ -4,9 +4,12 @@ import { register } from "../../services/user.service";
 import styles from "../register/register.module.css";
 import { useNavigate } from "react-router-dom";
 import { UserModel } from "../../shared/models/user";
+import { useState } from "react";
 
 export default function Register() {
   const navigate = useNavigate();
+  const [image, setImage] = useState<any>(null);
+
   interface RegisterFormValues {
     userName: string;
     email: string;
@@ -17,9 +20,9 @@ export default function Register() {
     birthday: string;
     address: string;
     role: boolean;
-    image: string;
+    image: any;
   }
-  
+
   const initialValues: RegisterFormValues = {
     userName: "",
     email: "",
@@ -30,7 +33,7 @@ export default function Register() {
     birthday: "",
     address: "",
     role: false,
-    image: "",
+    image: null,
   };
 
   const validationSchema = Yup.object().shape({
@@ -38,25 +41,32 @@ export default function Register() {
     email: Yup.string().email("Invalid email").required("Email is required"),
     password: Yup.string().required("Password is required"),
     confirmPassword: Yup.string()
-    .oneOf([Yup.ref('password')], 'Passwords must match')
-    .required('Confirm Password is required'),
+      .oneOf([Yup.ref("password")], "Passwords must match")
+      .required("Confirm Password is required"),
     name: Yup.string().required("Name is required"),
     lastName: Yup.string().required("Last name is required"),
-    birthday: Yup.string().required("Date of birth is required").matches(/^\d{4}-\d{2}-\d{2}$/, "Date format must be yyyy-mm-dd"),
+    birthday: Yup.string()
+      .required("Date of birth is required")
+      .matches(/^\d{4}-\d{2}-\d{2}$/, "Date format must be yyyy-mm-dd"),
     address: Yup.string().required("Address is required"),
-    image: Yup.string().required("Image is required"),
   });
 
   const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<RegisterFormValues>) => {
     var role = values.role;
     values.role = values.role ? 2 : 1;
     try {
+      values.image = image;
       await register(values as UserModel);
       navigate("/");
     } catch {
       values.role = role;
     }
     setSubmitting(false);
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
   };
 
   return (
@@ -83,7 +93,12 @@ export default function Register() {
               </div>
               <div className="form-group">
                 <label htmlFor="confirmPassword">Confirm Password</label>
-                <Field type="text" className={`form-control ${styles.field} ${errors.confirmPassword && touched.confirmPassword ? styles.inputError : ""}`} name="confirmPassword" placeholder="Confirm Password" />
+                <Field
+                  type="text"
+                  className={`form-control ${styles.field} ${errors.confirmPassword && touched.confirmPassword ? styles.inputError : ""}`}
+                  name="confirmPassword"
+                  placeholder="Confirm Password"
+                />
                 <ErrorMessage name="confirmPassword" component="div" className={styles.error} />
               </div>
               <div className="form-group">
@@ -113,9 +128,8 @@ export default function Register() {
                 </label>
               </div>
               <div className="form-group">
-                <label htmlFor="image">Profile Picture</label>
-                <Field type="text" className={`form-control ${styles.field} ${errors.image && touched.image ? styles.inputError : ""}`} name="image" placeholder="Enter image URL" />
-                <ErrorMessage name="image" component="div" className={styles.error} />
+                <label htmlFor="image">Image</label>
+                <input type="file" accept="image/*" name="image" className={`form-control ${styles.field}`} onChange={handleImageChange} required />
               </div>
               <button type="submit" className={`btn btn-dark mt-3 ${styles.submitButton}`} disabled={!isValid || !dirty}>
                 Submit

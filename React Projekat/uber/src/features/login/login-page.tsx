@@ -100,7 +100,6 @@ export default function LogIn() {
         <p>
           Don't have account? Sign in <Link to="/register">here</Link>
         </p>
-        <br />
         <GoogleLogin onSuccess={responseMessage} />
       </div>
     </div>

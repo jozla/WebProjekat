@@ -11,7 +11,7 @@ namespace Gateway.Features.User
     {
         public record RegisterCommand(
              string UserName, string Email, string Password, string Name, string LastName,
-             string Birthday, string Address, UserRole Role, string Image) : ICommand;
+             string Birthday, string Address, UserRole Role, IFormFile Image) : ICommand;
 
         public class CommandHandler : ICommandHandler<RegisterCommand>
         {
@@ -29,8 +29,16 @@ namespace Gateway.Features.User
                     Birthday = request.Birthday,
                     Address = request.Address,
                     Role = request.Role,
-                    Image = request.Image
                 };
+                var imageFileName = $"{request.Image.FileName}";
+                var imagePath = Path.Combine("wwwroot", "images", imageFileName);
+
+                using (var imageStream = new FileStream(imagePath, FileMode.Create))
+                {
+                    await request.Image.CopyToAsync(imageStream);
+                }
+
+                newUser.Image = imageFileName;
 
                 if (newUser.Role == UserRole.Driver)
                 {

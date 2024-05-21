@@ -17,7 +17,7 @@ namespace Gateway.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Register(Register.RegisterCommand request)
+        public async Task<ActionResult> Register([FromForm] Register.RegisterCommand request)
         {
             await _mediator.Send(request);
             return Ok();
@@ -32,7 +32,7 @@ namespace Gateway.Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<ActionResult> UpdateProfile(UpdateProfile.UpdateProfileCommand request)
+        public async Task<ActionResult> UpdateProfile([FromForm] UpdateProfile.UpdateProfileCommand request)
         {
             await _mediator.Send(request);
             return Ok();

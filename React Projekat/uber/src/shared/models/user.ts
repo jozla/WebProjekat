@@ -8,6 +8,6 @@ export interface UserModel {
   birthday: string;
   address: string;
   role: number;
-  image: string;
+  image: any;
   verificationState: number;
 }
