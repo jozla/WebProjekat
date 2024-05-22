@@ -13,10 +13,16 @@ namespace Gateway.Features.Ride
 
         public class CommandHandler : ICommandHandler<FinishRideCommand>
         {
+            private readonly IConfiguration _configuration;
+
+            public CommandHandler(IConfiguration configuration)
+            {
+                _configuration = configuration;
+            }
             public async Task<Unit> Handle(FinishRideCommand request, CancellationToken cancellationToken)
             {
                 var proxy = ServiceProxy.Create<IRideStatefulCommunication>(
-                    new Uri("fabric:/Uber/RideStateful"), new ServicePartitionKey(2));
+                    new Uri(_configuration.GetValue<string>("ProxyUrls:RideStateful")!), new ServicePartitionKey(2));
 
                 var existingRide = await proxy.GetRideById(request.RideId);
 

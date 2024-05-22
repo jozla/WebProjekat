@@ -14,10 +14,16 @@ namespace Gateway.Features.User
 
         public class QueryHandler : IQueryHandler<GetUserByIdQuery, GetUserByIdResponse>
         {
+            private readonly IConfiguration _configuration;
+
+            public QueryHandler(IConfiguration configuration)
+            {
+                _configuration = configuration;
+            }
             public async Task<GetUserByIdResponse> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
             {
                 var proxy = ServiceProxy.Create<IUserStatefulCommunication>(
-                    new Uri("fabric:/Uber/UserStatefull"), new ServicePartitionKey(1));
+                    new Uri(_configuration.GetValue<string>("ProxyUrls:UserStateful")!), new ServicePartitionKey(1));
 
                 var existingUser = await proxy.GetUserById(request.Id);
 

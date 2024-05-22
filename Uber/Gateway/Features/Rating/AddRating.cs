@@ -11,10 +11,16 @@ namespace Gateway.Features.Rating
 
         public class CommandHandler : ICommandHandler<AddRatingCommand>
         {
+            private readonly IConfiguration _configuration;
+
+            public CommandHandler(IConfiguration configuration)
+            {
+                _configuration = configuration;
+            }
             public async Task<Unit> Handle(AddRatingCommand request, CancellationToken cancellationToken)
             {
                 var proxy = ServiceProxy.Create<IRatingStatelessCommunication>(
-                   new Uri("fabric:/Uber/RatingStateless"));
+                   new Uri(_configuration.GetValue<string>("ProxyUrls:RatingStateless")!));
 
                 await proxy.AddRating(request.UserId, request.Rating);
 

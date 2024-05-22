@@ -10,11 +10,17 @@ namespace Gateway.Features.User
     public class Register
     {
         public record RegisterCommand(
-             string UserName, string Email, string Password, string Name, string LastName,
-             string Birthday, string Address, UserRole Role, IFormFile Image) : ICommand;
+             string UserName, string Email, string? Password, string Name, string LastName,
+             string? Birthday, string? Address, UserRole Role, IFormFile? Image) : ICommand;
 
         public class CommandHandler : ICommandHandler<RegisterCommand>
         {
+            private readonly IConfiguration _configuration;
+
+            public CommandHandler(IConfiguration configuration)
+            {
+                _configuration = configuration;
+            }
 
             public async Task<Unit> Handle(RegisterCommand request, CancellationToken cancellationToken)
             {
@@ -23,30 +29,34 @@ namespace Gateway.Features.User
                     Id = Guid.NewGuid(),
                     UserName = request.UserName,
                     Email = request.Email,
-                    Password = BCrypt.Net.BCrypt.HashPassword(request.Password),
+                    Password = request.Password == null ? BCrypt.Net.BCrypt.HashPassword("")
+                        : BCrypt.Net.BCrypt.HashPassword(request.Password),
                     Name = request.Name,
                     LastName = request.LastName,
-                    Birthday = request.Birthday,
-                    Address = request.Address,
+                    Birthday = request.Birthday == null ? "" : request.Birthday,
+                    Address = request.Address == null ? "" : request.Address,
                     Role = request.Role,
                 };
-                var imageFileName = $"{request.Image.FileName}";
-                var imagePath = Path.Combine("wwwroot", "images", imageFileName);
-
-                using (var imageStream = new FileStream(imagePath, FileMode.Create))
+                if (request.Image != null)
                 {
-                    await request.Image.CopyToAsync(imageStream);
+                    var imageFileName = $"{request.Image.FileName}";
+                    var imagePath = Path.Combine("wwwroot", "images", imageFileName);
+
+                    using (var imageStream = new FileStream(imagePath, FileMode.Create))
+                    {
+                        await request.Image.CopyToAsync(imageStream);
+                    }
+                    newUser.Image = imageFileName;
                 }
 
-                newUser.Image = imageFileName;
+                newUser.Image = "";
 
                 if (newUser.Role == UserRole.Driver)
                 {
                     newUser.VerificationState = VerificationState.Processing;
                 }
-
                 var proxy = ServiceProxy.Create<IUserStatefulCommunication>(
-                    new Uri("fabric:/Uber/UserStatefull"), new ServicePartitionKey(1));
+                    new Uri(_configuration.GetValue<string>("ProxyUrls:UserStateful")!), new ServicePartitionKey(1));
 
                 await proxy.Register(newUser);
                 return Unit.Value;

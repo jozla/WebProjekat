@@ -66,7 +66,7 @@ export default function LogIn() {
         birthday: "",
         address: "",
         role: 1,
-        image: "",
+        image: null,
       };
       await register(data as UserModel);
       var response = await login({ email: decodedToken.email, password: "" });

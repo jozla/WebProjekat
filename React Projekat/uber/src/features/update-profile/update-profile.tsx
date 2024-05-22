@@ -35,7 +35,7 @@ export default function UpdateProfile() {
   const validationSchema = Yup.object().shape({
     userName: Yup.string().required("Username is required"),
     email: Yup.string().email("Invalid email").required("Email is required"),
-    oldPassword: Yup.string().required("Password is required"),
+    oldPassword: Yup.string().required("Old password is required"),
     newPassword: Yup.string().required("New Password is required"),
     name: Yup.string().required("Name is required"),
     lastName: Yup.string().required("Last name is required"),
@@ -68,7 +68,8 @@ export default function UpdateProfile() {
       <Header></Header>
       <div className={styles.wrapper}>
         <div className={styles.form}>
-          <h2 className="mb-4">Register</h2>
+          <h2 className="mb-4">Update profile</h2>
+          <p>If you did registration via Google in oldPassword or newPassword field you can just type "/" if you don't want to change password.</p>
           <Formik initialValues={initialValues!} validationSchema={validationSchema} onSubmit={handleSubmit}>
             {({ isValid, dirty, errors, touched, handleSubmit }) => (
               <form onSubmit={handleSubmit}>

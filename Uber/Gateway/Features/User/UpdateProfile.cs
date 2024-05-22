@@ -15,18 +15,28 @@ namespace Gateway.Features.User
 
         public class CommandHandler : ICommandHandler<UpdateProfileCommand>
         {
+            private readonly IConfiguration _configuration;
+
+            public CommandHandler(IConfiguration configuration)
+            {
+                _configuration = configuration;
+            }
+
             public async Task<Unit> Handle(UpdateProfileCommand request, CancellationToken cancellationToken)
             {
                 var proxy = ServiceProxy.Create<IUserStatefulCommunication>(
-                    new Uri("fabric:/Uber/UserStatefull"), new ServicePartitionKey(1));
+                    new Uri(_configuration.GetValue<string>("ProxyUrls:UserStateful")!), new ServicePartitionKey(1));
 
                 UserModel existingUser = await proxy.GetUserById(request.Id);
-                var isMatch = BCrypt.Net.BCrypt.Verify(request.OldPassword, existingUser.Password);
+                var isMatch = BCrypt.Net.BCrypt.Verify(request.OldPassword == "/" ? "" : request.OldPassword
+                                    , existingUser.Password);
+
                 if (existingUser != null && isMatch)
                 {
                     existingUser.UserName = request.UserName;
                     existingUser.Email = request.Email;
-                    existingUser.Password = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+                    existingUser.Password = request.NewPassword == "/" ? BCrypt.Net.BCrypt.HashPassword("")
+                            : BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
                     existingUser.Name = request.Name;
                     existingUser.LastName = request.LastName;
                     existingUser.Birthday = request.Birthday;

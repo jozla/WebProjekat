@@ -13,10 +13,16 @@ namespace Gateway.Features.User
 
         public class QueryHandler : IQueryHandler<GetAllDriversQuery, GetAllDriversResponse>
         {
+            private readonly IConfiguration _configuration;
+
+            public QueryHandler(IConfiguration configuration)
+            {
+                _configuration = configuration;
+            }
             public async Task<GetAllDriversResponse> Handle(GetAllDriversQuery request, CancellationToken cancellationToken)
             {
                 var proxy = ServiceProxy.Create<IUserStatefulCommunication>(
-                    new Uri("fabric:/Uber/UserStatefull"), new ServicePartitionKey(1));
+                    new Uri(_configuration.GetValue<string>("ProxyUrls:UserStateful")!), new ServicePartitionKey(1));
 
                 var users = await proxy.GetAllDrivers();
 

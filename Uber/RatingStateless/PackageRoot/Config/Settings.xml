@@ -6,4 +6,8 @@
     <Parameter Name="MyParameter" Value="Value1" />
   </Section>
   -->
+
+	<Section Name="DatabaseConfig">
+		<Parameter Name="ConnectionString" Value="Server=localhost,1434;Database=Database;User Id=sa;Password=Sifra123!;TrustServerCertificate=true;" />
+	</Section>
 </Settings>

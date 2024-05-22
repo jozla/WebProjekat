@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Services.Runtime;
 using System.Diagnostics;
+using System.Fabric;
 
 namespace RatingStateless
 {
@@ -18,8 +19,21 @@ namespace RatingStateless
                 // Registering a service maps a service type name to a .NET type.
                 // When Service Fabric creates an instance of this service type,
                 // an instance of the class is created in this host process.
+
+                CodePackageActivationContext context = FabricRuntime.GetActivationContext();
+                var configSettings = context.GetConfigurationPackageObject("Config").Settings;
+                var data = configSettings.Sections["DatabaseConfig"];
+                var connectionString = "";
+                foreach (var parameter in data.Parameters)
+                {
+                    if (parameter.Name == "ConnectionString")
+                    {
+                        connectionString = parameter.Value;
+                    }
+                }
+
                 var provider = new ServiceCollection()
-                    .AddDbContext<RatingDbContext>(options => options.UseSqlServer("Server=localhost,1434;Database=Database;User Id=sa;Password=Sifra123!;TrustServerCertificate=true;"))
+                    .AddDbContext<RatingDbContext>(options => options.UseSqlServer(connectionString))
                     .BuildServiceProvider();
                 ServiceRuntime.RegisterServiceAsync("RatingStatelessType",
                     context => new RatingStateless(context, provider)).GetAwaiter().GetResult();
