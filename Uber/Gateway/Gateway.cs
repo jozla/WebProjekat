@@ -1,4 +1,6 @@
+using FluentValidation;
 using Gateway.Helpers;
+using Gateway.Validation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -72,8 +74,12 @@ namespace Gateway
                             });
                         });
 
-                        builder.Services.AddMediatR(
-                            cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+                        builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+                        builder.Services.AddMediatR(cfg =>
+                        {
+                            cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+                            cfg.AddOpenBehavior(typeof(ValidationBehaviour<,>));
+                        });
 
                         builder.Services.AddAuthentication(options =>
                         {
@@ -96,6 +102,7 @@ namespace Gateway
 
                         builder.Services.AddSignalR();
 
+
                         var app = builder.Build();
                         if (app.Environment.IsDevelopment())
                         {
@@ -109,6 +116,8 @@ namespace Gateway
                             config.AllowAnyMethod();
                             config.AllowAnyOrigin();
                         });
+
+                        app.UseMiddleware<CustomValidationException>();
 
                         app.UseAuthentication();
                         app.UseAuthorization();

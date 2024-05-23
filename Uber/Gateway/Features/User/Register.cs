@@ -2,6 +2,7 @@
 using Common.Models;
 using Communication;
 using Gateway.CQRS;
+using Gateway.Validation;
 using MediatR;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Remoting.Client;
@@ -24,41 +25,51 @@ namespace Gateway.Features.User
 
             public async Task<Unit> Handle(RegisterCommand request, CancellationToken cancellationToken)
             {
-                var newUser = new UserModel
-                {
-                    Id = Guid.NewGuid(),
-                    UserName = request.UserName,
-                    Email = request.Email,
-                    Password = request.Password == null ? BCrypt.Net.BCrypt.HashPassword("")
-                        : BCrypt.Net.BCrypt.HashPassword(request.Password),
-                    Name = request.Name,
-                    LastName = request.LastName,
-                    Birthday = request.Birthday == null ? "" : request.Birthday,
-                    Address = request.Address == null ? "" : request.Address,
-                    Role = request.Role,
-                };
-                if (request.Image != null)
-                {
-                    var imageFileName = $"{request.Image.FileName}";
-                    var imagePath = Path.Combine("wwwroot", "images", imageFileName);
-
-                    using (var imageStream = new FileStream(imagePath, FileMode.Create))
-                    {
-                        await request.Image.CopyToAsync(imageStream);
-                    }
-                    newUser.Image = imageFileName;
-                }
-
-                newUser.Image = "";
-
-                if (newUser.Role == UserRole.Driver)
-                {
-                    newUser.VerificationState = VerificationState.Processing;
-                }
                 var proxy = ServiceProxy.Create<IUserStatefulCommunication>(
                     new Uri(_configuration.GetValue<string>("ProxyUrls:UserStateful")!), new ServicePartitionKey(1));
 
-                await proxy.Register(newUser);
+                var existingUser = await proxy.GetUserByEmail(request.Email);
+
+                if (existingUser != null)
+                {
+                    throw new UserExistsException();
+                }
+                else
+                {
+                    var newUser = new UserModel
+                    {
+                        Id = Guid.NewGuid(),
+                        UserName = request.UserName,
+                        Email = request.Email,
+                        Password = request.Password == null ? BCrypt.Net.BCrypt.HashPassword("")
+                            : BCrypt.Net.BCrypt.HashPassword(request.Password),
+                        Name = request.Name,
+                        LastName = request.LastName,
+                        Birthday = request.Birthday == null ? "" : request.Birthday,
+                        Address = request.Address == null ? "" : request.Address,
+                        Role = request.Role,
+                    };
+                    if (request.Image != null)
+                    {
+                        var imageFileName = $"{request.Image.FileName}";
+                        var imagePath = Path.Combine("wwwroot", "images", imageFileName);
+
+                        using (var imageStream = new FileStream(imagePath, FileMode.Create))
+                        {
+                            await request.Image.CopyToAsync(imageStream);
+                        }
+                        newUser.Image = imageFileName;
+                    }
+
+                    newUser.Image = "";
+
+                    if (newUser.Role == UserRole.Driver)
+                    {
+                        newUser.VerificationState = VerificationState.Processing;
+                    }
+
+                    await proxy.Register(newUser);
+                }
                 return Unit.Value;
             }
         }

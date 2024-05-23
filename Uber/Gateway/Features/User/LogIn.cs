@@ -1,6 +1,8 @@
 ﻿using Common.Models;
 using Communication;
+using FluentValidation;
 using Gateway.CQRS;
+using Gateway.Validation;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Remoting.Client;
@@ -15,6 +17,13 @@ namespace Gateway.Features.User
         public record LogInCommand(string Email, string Password) : ICommand<LogInResponse>;
         public record LogInResponse(string Token);
 
+        public class Validator : AbstractValidator<LogInCommand>
+        {
+            public Validator()
+            {
+                RuleFor(entity => entity.Email).NotEmpty().WithMessage("Email is required");
+            }
+        }
         public class CommandHandler : ICommandHandler<LogInCommand, LogInResponse>
         {
             private readonly IConfiguration _configuration;
@@ -30,14 +39,20 @@ namespace Gateway.Features.User
                              new Uri(_configuration.GetValue<string>("ProxyUrls:UserStateful")!), new ServicePartitionKey(1));
 
                 var existingUser = await proxy.GetUserByEmail(request.Email);
-                if (existingUser != null &&
-                     BCrypt.Net.BCrypt.Verify(request.Password, existingUser.Password))
+
+                if (existingUser == null)
                 {
+                    throw new EntityNotFoundException();
+                }
+                else
+                {
+                    if (!BCrypt.Net.BCrypt.Verify(request.Password, existingUser.Password))
+                    {
+                        throw new BadPasswordException();
+                    }
                     var token = GenerateToken(existingUser, _configuration);
                     return new LogInResponse(token);
                 }
-
-                return null;
             }
 
             /// Helper for token generating

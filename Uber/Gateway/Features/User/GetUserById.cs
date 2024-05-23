@@ -1,6 +1,7 @@
 ﻿using Common.DTOs;
 using Communication;
 using Gateway.CQRS;
+using Gateway.Validation;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Remoting.Client;
 
@@ -27,7 +28,11 @@ namespace Gateway.Features.User
 
                 var existingUser = await proxy.GetUserById(request.Id);
 
-                if (existingUser != null)
+                if (existingUser == null)
+                {
+                    throw new EntityNotFoundException();
+                }
+                else
                 {
                     var userDto = new GetUserDto
                     {
@@ -44,8 +49,6 @@ namespace Gateway.Features.User
                     };
                     return new GetUserByIdResponse(userDto);
                 }
-
-                return null;
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using Common.Enums;
 using Communication;
 using Gateway.CQRS;
+using Gateway.Validation;
 using MediatR;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Remoting.Client;
@@ -26,7 +27,11 @@ namespace Gateway.Features.User
 
                 var existingUser = await proxy.GetUserById(request.Id);
 
-                if (existingUser != null)
+                if (existingUser == null)
+                {
+                    throw new EntityNotFoundException();
+                }
+                else
                 {
                     existingUser.VerificationState = VerificationState.Verified;
                     await proxy.UpdateUser(existingUser);

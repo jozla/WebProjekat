@@ -1,6 +1,7 @@
 ﻿using Common.Models;
 using Communication;
 using Gateway.CQRS;
+using Gateway.Validation;
 using MediatR;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Remoting.Client;
@@ -28,10 +29,19 @@ namespace Gateway.Features.User
                     new Uri(_configuration.GetValue<string>("ProxyUrls:UserStateful")!), new ServicePartitionKey(1));
 
                 UserModel existingUser = await proxy.GetUserById(request.Id);
+                if (existingUser == null)
+                {
+                    throw new EntityNotFoundException();
+                }
+
                 var isMatch = BCrypt.Net.BCrypt.Verify(request.OldPassword == "/" ? "" : request.OldPassword
                                     , existingUser.Password);
 
-                if (existingUser != null && isMatch)
+                if (!isMatch)
+                {
+                    throw new BadPasswordException();
+                }
+                else
                 {
                     existingUser.UserName = request.UserName;
                     existingUser.Email = request.Email;
