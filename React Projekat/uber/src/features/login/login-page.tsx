@@ -28,11 +28,11 @@ export default function LogIn() {
       if (response.token) {
         localStorage.setItem("access_token", JSON.stringify(response.token));
         var decodedToken = DecodeToken()!;
-        if (decodedToken.user_role == "User") {
+        if (decodedToken.user_role === "User") {
           navigate("user/dashboard");
-        } else if (decodedToken.user_role == "Driver") {
+        } else if (decodedToken.user_role === "Driver") {
           navigate("driver/dashboard");
-        } else if (decodedToken.user_role == "Admin") {
+        } else if (decodedToken.user_role === "Admin") {
           navigate("admin/dashboard");
         }
       }

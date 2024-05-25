@@ -10,6 +10,7 @@ using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using System.Fabric;
 using System.Reflection;
+using System.Security.Claims;
 using System.Text;
 
 namespace Gateway
@@ -97,7 +98,8 @@ namespace Gateway
                                 ValidIssuer = builder.Configuration["Jwt:Issuer"],
                                 ValidAudience = builder.Configuration["Jwt:Audience"],
                                 IssuerSigningKey = new SymmetricSecurityKey
-                                    (Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+                                    (Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
+                                RoleClaimType = ClaimTypes.Role
                             };
                         });
 

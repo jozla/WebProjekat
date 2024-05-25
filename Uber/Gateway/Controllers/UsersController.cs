@@ -39,7 +39,7 @@ namespace Gateway.Controllers
         }
 
         [HttpGet("get-drivers")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> GetAllDrivers()
         {
             var response = await _mediator.Send(new GetAllDrivers.GetAllDriversQuery());
@@ -56,6 +56,7 @@ namespace Gateway.Controllers
 
         [HttpPost("verify")]
         [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> VerifyUser(VerifyUser.VerifyUserCommand request)
         {
             await _mediator.Send(request);
@@ -64,6 +65,7 @@ namespace Gateway.Controllers
 
         [HttpPost("block")]
         [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> BlockUser(BlockUser.BlockUserCommand request)
         {
             await _mediator.Send(request);

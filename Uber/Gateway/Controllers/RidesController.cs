@@ -1,6 +1,7 @@
 ﻿using Gateway.Features.Ride;
 using Gateway.Helpers.ChatHub;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
@@ -20,6 +21,8 @@ namespace Gateway.Controllers
         }
 
         [HttpPost]
+        [Authorize]
+        [Authorize(Roles = "User")]
         public async Task<ActionResult> AddRide(AddRide.AddRideCommand request)
         {
             await _mediator.Send(request);
@@ -28,6 +31,8 @@ namespace Gateway.Controllers
         }
 
         [HttpPut("confirm-ride")]
+        [Authorize]
+        [Authorize(Roles = "Driver")]
         public async Task<ActionResult> ConfirmRide(ConfirmRide.ConfirmRideCommand request)
         {
             await _mediator.Send(request);
@@ -36,20 +41,17 @@ namespace Gateway.Controllers
         }
 
         [HttpPut("finish-ride")]
+        [Authorize]
+        [Authorize(Roles = "Driver")]
         public async Task<ActionResult> FinishRide(FinishRide.FinishRideCommand request)
         {
             await _mediator.Send(request);
             return Ok();
         }
 
-        [HttpGet("{id:Guid}")]
-        public async Task<ActionResult> GetRideById(Guid id)
-        {
-            var response = await _mediator.Send(new GetRideById.GetRideByIdQuery(id));
-            return Ok(response);
-        }
-
         [HttpGet]
+        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> GetAllRides()
         {
             var response = await _mediator.Send(new GetAllRides.GetAllRidesQuery());
@@ -57,6 +59,8 @@ namespace Gateway.Controllers
         }
 
         [HttpGet("new-rides")]
+        [Authorize]
+        [Authorize(Roles = "Driver")]
         public async Task<ActionResult> GetNewRides()
         {
             var response = await _mediator.Send(new GetNewRides.GetNewRidesQuery());
@@ -64,6 +68,8 @@ namespace Gateway.Controllers
         }
 
         [HttpGet("driver-rides/{driverId:Guid}")]
+        [Authorize]
+        [Authorize(Roles = "Driver")]
         public async Task<ActionResult> GetRidesForDriver(Guid driverId)
         {
             var response = await _mediator.Send(new GetRidesForDriver.GetRidesForDriverQuery(driverId));
@@ -71,6 +77,8 @@ namespace Gateway.Controllers
         }
 
         [HttpGet("user-rides/{userId:Guid}")]
+        [Authorize]
+        [Authorize(Roles = "User")]
         public async Task<ActionResult> GetRidesForUser(Guid userId)
         {
             var response = await _mediator.Send(new GetRidesForUser.GetRidesForUserQuery(userId));
@@ -78,6 +86,8 @@ namespace Gateway.Controllers
         }
 
         [HttpGet("confirmed-ride/{userId:Guid}")]
+        [Authorize]
+        [Authorize(Roles = "User,Driver")]
         public async Task<ActionResult> GetConfirmedRide(Guid userId)
         {
             var response = await _mediator.Send(new GetConfirmedRide.GetConfirmedRideQuery(userId));

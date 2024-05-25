@@ -1,5 +1,6 @@
 ﻿using Gateway.Features.Rating;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Gateway.Controllers
@@ -16,6 +17,8 @@ namespace Gateway.Controllers
         }
 
         [HttpGet("{userId:Guid}")]
+        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> GetRatingForUser(Guid userId)
         {
             var response = await _mediator.Send(new GetRatingForUser.GetRatingForUserQuery(userId));
@@ -23,6 +26,8 @@ namespace Gateway.Controllers
         }
 
         [HttpPost]
+        [Authorize]
+        [Authorize(Roles = "User")]
         public async Task<ActionResult> AddRating(AddRating.AddRatingCommand request)
         {
             await _mediator.Send(request);
