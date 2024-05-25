@@ -51,7 +51,7 @@ export default function AdminDashboard() {
       alert('This user\'s rating is: '+ response.rating.toFixed(1))
     }
     catch{
-      console.log('Error getting rating');
+      alert("There is no rating for this user.");
     }
   }
 

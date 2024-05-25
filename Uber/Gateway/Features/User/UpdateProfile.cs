@@ -1,5 +1,6 @@
 ﻿using Common.Models;
 using Communication;
+using FluentValidation;
 using Gateway.CQRS;
 using Gateway.Validation;
 using MediatR;
@@ -13,7 +14,24 @@ namespace Gateway.Features.User
         public record UpdateProfileCommand(
             Guid Id, string UserName, string Email, string OldPassword, string NewPassword, string Name, string LastName,
             string Birthday, string Address, IFormFile Image) : ICommand;
-
+        public class Validator : AbstractValidator<UpdateProfileCommand>
+        {
+            public Validator()
+            {
+                RuleFor(entity => entity.Id).NotEmpty().WithMessage("Id is required");
+                RuleFor(entity => entity.UserName).NotEmpty().WithMessage("Username is required");
+                RuleFor(entity => entity.Email).NotEmpty().WithMessage("Email is required");
+                RuleFor(entity => entity.OldPassword).NotEmpty().WithMessage("Old password is required");
+                RuleFor(entity => entity.NewPassword).NotEmpty().WithMessage("New password is required");
+                RuleFor(entity => entity.Name).NotEmpty().WithMessage("Name is required");
+                RuleFor(entity => entity.LastName).NotEmpty().WithMessage("Last name is required");
+                RuleFor(entity => entity.Birthday).NotEmpty().WithMessage("Birthday is required");
+                RuleFor(entity => entity.Birthday).Matches(@"^\d{4}-\d{2}-\d{2}$")
+                    .WithMessage("Birthday must be in the format yyyy-MM-dd");
+                RuleFor(entity => entity.Address).NotEmpty().WithMessage("Address is required");
+                RuleFor(entity => entity.Image).NotEmpty().WithMessage("Image is required");
+            }
+        }
         public class CommandHandler : ICommandHandler<UpdateProfileCommand>
         {
             private readonly IConfiguration _configuration;

@@ -50,14 +50,14 @@ namespace RatingStateless
             }
         }
 
-        public async Task<double> GetRating(Guid userId)
+        public async Task<double?> GetRating(Guid userId)
         {
             var existingRating = await _ratingDbContext.Ratings.SingleOrDefaultAsync(r => r.UserId == userId);
             if (existingRating != null)
             {
                 return existingRating.Rating;
             }
-            return 0;
+            return null;
         }
 
         #endregion

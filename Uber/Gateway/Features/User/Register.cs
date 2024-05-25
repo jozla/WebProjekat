@@ -1,6 +1,7 @@
 ﻿using Common.Enums;
 using Common.Models;
 using Communication;
+using FluentValidation;
 using Gateway.CQRS;
 using Gateway.Validation;
 using MediatR;
@@ -14,6 +15,16 @@ namespace Gateway.Features.User
              string UserName, string Email, string? Password, string Name, string LastName,
              string? Birthday, string? Address, UserRole Role, IFormFile? Image) : ICommand;
 
+        public class Validator : AbstractValidator<RegisterCommand>
+        {
+            public Validator()
+            {
+                RuleFor(entity => entity.UserName).NotEmpty().WithMessage("Username is required");
+                RuleFor(entity => entity.Email).NotEmpty().WithMessage("Email is required");
+                RuleFor(entity => entity.Name).NotEmpty().WithMessage("Name is required");
+                RuleFor(entity => entity.LastName).NotEmpty().WithMessage("Last name is required");
+            }
+        }
         public class CommandHandler : ICommandHandler<RegisterCommand>
         {
             private readonly IConfiguration _configuration;

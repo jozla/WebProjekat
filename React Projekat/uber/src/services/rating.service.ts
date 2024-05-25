@@ -5,7 +5,7 @@ export const addRating = async (data: RatingModel) => {
     try {
       await axiosInstance.post("/ratings", data);
     } catch (error) {
-      console.error("Error fetching rides:", error);
+      console.error("Error fetching rating:", error);
       throw error;
     }
 };
@@ -15,7 +15,7 @@ export const getRating = async (userId: string) => {
     const response = await axiosInstance.get("/ratings/"+userId);
     return response.data;
   } catch (error) {
-    console.error("Error fetching rides:", error);
+    console.error("Error fetching rating:", error);
     throw error;
   }
 };

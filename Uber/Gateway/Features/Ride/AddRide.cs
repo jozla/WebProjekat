@@ -1,5 +1,6 @@
 ﻿using Common.Models;
 using Communication;
+using FluentValidation;
 using Gateway.CQRS;
 using MediatR;
 using Microsoft.ServiceFabric.Services.Client;
@@ -12,6 +13,18 @@ namespace Gateway.Features.Ride
         public record AddRideCommand(
                 Guid Id, string StartingPoint, string EndingPoint, int Price, int DriverTimeInSeconds,
                 Guid PassengerId) : ICommand;
+
+        public class Validator : AbstractValidator<AddRideCommand>
+        {
+            public Validator()
+            {
+                RuleFor(entity => entity.StartingPoint).NotEmpty().WithMessage("Starting point is required");
+                RuleFor(entity => entity.EndingPoint).NotEmpty().WithMessage("Ending point is required");
+                RuleFor(entity => entity.Price).NotEmpty().WithMessage("Price is required");
+                RuleFor(entity => entity.DriverTimeInSeconds).NotEmpty().WithMessage("Driver time is required");
+                RuleFor(entity => entity.PassengerId).NotEmpty().WithMessage("Passenger id is required");
+            }
+        }
 
         public class CommandHandler : ICommandHandler<AddRideCommand>
         {

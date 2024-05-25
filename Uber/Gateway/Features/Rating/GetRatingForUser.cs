@@ -1,5 +1,6 @@
 ﻿using Communication;
 using Gateway.CQRS;
+using Gateway.Validation;
 using Microsoft.ServiceFabric.Services.Remoting.Client;
 
 namespace Gateway.Features.Rating
@@ -7,7 +8,7 @@ namespace Gateway.Features.Rating
     public class GetRatingForUser
     {
         public record GetRatingForUserQuery(Guid UserId) : IQuery<GetRatingForUserResponse>;
-        public record GetRatingForUserResponse(double Rating);
+        public record GetRatingForUserResponse(double? Rating);
 
         public class QueryHandler : IQueryHandler<GetRatingForUserQuery, GetRatingForUserResponse>
         {
@@ -23,6 +24,11 @@ namespace Gateway.Features.Rating
                     new Uri(_configuration.GetValue<string>("ProxyUrls:RatingStateless")!));
 
                 var rating = await proxy.GetRating(request.UserId);
+
+                if (rating == null)
+                {
+                    throw new EntityNotFoundException();
+                }
 
                 return new GetRatingForUserResponse(rating);
             }

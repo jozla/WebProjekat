@@ -53,10 +53,13 @@ export default function LogIn() {
 
   const responseMessage = async (response) => {
     var decodedToken = jwtDecode<TokenPayload>(response.credential);
-    var response = await login({ email: decodedToken.email, password: "" });
-    if (response.token) {
-      googleLogIn(response.token);
-    } else {
+    try{
+      var loginResponse = await login({ email: decodedToken.email, password: "" });
+      if (loginResponse.token) {
+        googleLogIn(loginResponse.token);
+      }
+    }
+    catch{
       var data = {
         userName: decodedToken.email,
         email: decodedToken.email,
@@ -69,7 +72,7 @@ export default function LogIn() {
         image: null,
       };
       await register(data as UserModel);
-      var response = await login({ email: decodedToken.email, password: "" });
+      response = await login({ email: decodedToken.email, password: "" });
       googleLogIn(response.token);
     }
   };

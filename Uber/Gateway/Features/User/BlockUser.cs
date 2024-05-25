@@ -1,5 +1,6 @@
 ﻿using Common.Enums;
 using Communication;
+using FluentValidation;
 using Gateway.CQRS;
 using Gateway.Validation;
 using MediatR;
@@ -11,6 +12,14 @@ namespace Gateway.Features.User
     public class BlockUser
     {
         public record BlockUserCommand(Guid Id) : ICommand;
+
+        public class Validator : AbstractValidator<BlockUserCommand>
+        {
+            public Validator()
+            {
+                RuleFor(entity => entity.Id).NotEmpty().WithMessage("Id is required");
+            }
+        }
 
         public class CommandHandler : ICommandHandler<BlockUserCommand>
         {

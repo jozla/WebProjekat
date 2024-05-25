@@ -1,5 +1,6 @@
 ﻿using Common.Enums;
 using Communication;
+using FluentValidation;
 using Gateway.CQRS;
 using Gateway.Validation;
 using MediatR;
@@ -11,7 +12,13 @@ namespace Gateway.Features.User
     public class VerifyUser
     {
         public record VerifyUserCommand(Guid Id) : ICommand;
-
+        public class Validator : AbstractValidator<VerifyUserCommand>
+        {
+            public Validator()
+            {
+                RuleFor(entity => entity.Id).NotEmpty().WithMessage("Id is required");
+            }
+        }
         public class CommandHandler : ICommandHandler<VerifyUserCommand>
         {
             private readonly IConfiguration _configuration;

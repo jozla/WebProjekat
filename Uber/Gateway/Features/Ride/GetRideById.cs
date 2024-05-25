@@ -1,6 +1,8 @@
 ﻿using Common.DTOs;
 using Communication;
+using FluentValidation;
 using Gateway.CQRS;
+using Gateway.Validation;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Remoting.Client;
 
@@ -10,7 +12,13 @@ namespace Gateway.Features.Ride
     {
         public record GetRideByIdQuery(Guid Id) : IQuery<GetRideByIdResponse>;
         public record GetRideByIdResponse(GetRideDto Ride);
-
+        public class Validator : AbstractValidator<GetRideByIdQuery>
+        {
+            public Validator()
+            {
+                RuleFor(entity => entity.Id).NotEmpty().WithMessage("Id is required");
+            }
+        }
         public class QueryHandler : IQueryHandler<GetRideByIdQuery, GetRideByIdResponse>
         {
             private readonly IConfiguration _configuration;
@@ -25,6 +33,11 @@ namespace Gateway.Features.Ride
                     new Uri(_configuration.GetValue<string>("ProxyUrls:RideStateful")!), new ServicePartitionKey(2));
 
                 var ride = await proxy.GetRideById(request.Id);
+
+                if (ride == null)
+                {
+                    throw new EntityNotFoundException();
+                }
 
                 var rideDto = new GetRideDto
                 {

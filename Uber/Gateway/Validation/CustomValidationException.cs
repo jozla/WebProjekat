@@ -61,6 +61,34 @@ public class CustomValidationException
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
             await context.Response.WriteAsJsonAsync(problemDetails);
         }
+        catch (RideConfirmedException)
+        {
+            var problemDetails = new ValidationProblemDetails
+            {
+                Status = StatusCodes.Status400BadRequest,
+                Type = "ValidationFailure",
+                Title = "Validation error",
+                Detail = "One or more validation errors has occurred",
+                Errors = new Dictionary<string, string[]>()
+            };
+            problemDetails.Errors.Add("Ride", ["Ride already confirmed."]);
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            await context.Response.WriteAsJsonAsync(problemDetails);
+        }
+        catch (RideNotConfirmedException)
+        {
+            var problemDetails = new ValidationProblemDetails
+            {
+                Status = StatusCodes.Status400BadRequest,
+                Type = "ValidationFailure",
+                Title = "Validation error",
+                Detail = "One or more validation errors has occurred",
+                Errors = new Dictionary<string, string[]>()
+            };
+            problemDetails.Errors.Add("Ride", ["Ride is not confirmed."]);
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            await context.Response.WriteAsJsonAsync(problemDetails);
+        }
         catch (ValidationException exception)
         {
             var problemDetails = new ValidationProblemDetails

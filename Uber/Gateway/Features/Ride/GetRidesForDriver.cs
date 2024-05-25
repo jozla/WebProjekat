@@ -1,5 +1,6 @@
 ﻿using Common.DTOs;
 using Communication;
+using FluentValidation;
 using Gateway.CQRS;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Remoting.Client;
@@ -11,6 +12,13 @@ namespace Gateway.Features.Ride
         public record GetRidesForDriverQuery(Guid DriverId) : IQuery<GetRidesForDriverResponse>;
         public record GetRidesForDriverResponse(IEnumerable<GetRideDto> Rides);
 
+        public class Validator : AbstractValidator<GetRidesForDriverQuery>
+        {
+            public Validator()
+            {
+                RuleFor(entity => entity.DriverId).NotEmpty().WithMessage("Driver id is required");
+            }
+        }
         public class CommandHandler : IQueryHandler<GetRidesForDriverQuery, GetRidesForDriverResponse>
         {
             private readonly IConfiguration _configuration;

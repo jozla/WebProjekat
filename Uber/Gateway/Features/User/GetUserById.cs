@@ -1,5 +1,6 @@
 ﻿using Common.DTOs;
 using Communication;
+using FluentValidation;
 using Gateway.CQRS;
 using Gateway.Validation;
 using Microsoft.ServiceFabric.Services.Client;
@@ -12,7 +13,13 @@ namespace Gateway.Features.User
         public record GetUserByIdQuery(Guid Id) : IQuery<GetUserByIdResponse>;
         public record GetUserByIdResponse(GetUserDto user);
 
-
+        public class Validator : AbstractValidator<GetUserByIdQuery>
+        {
+            public Validator()
+            {
+                RuleFor(entity => entity.Id).NotEmpty().WithMessage("Id is required");
+            }
+        }
         public class QueryHandler : IQueryHandler<GetUserByIdQuery, GetUserByIdResponse>
         {
             private readonly IConfiguration _configuration;
