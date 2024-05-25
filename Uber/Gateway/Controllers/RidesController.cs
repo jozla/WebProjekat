@@ -1,5 +1,5 @@
 ﻿using Gateway.Features.Ride;
-using Gateway.Helpers;
+using Gateway.Helpers.ChatHub;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;

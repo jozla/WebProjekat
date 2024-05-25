@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getAccessToken } from "./local-storage.service";
 
-const API_BASE_URL = "http://localhost:8389/api";
+const API_BASE_URL = process.env.REACT_APP_API_URL;
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,

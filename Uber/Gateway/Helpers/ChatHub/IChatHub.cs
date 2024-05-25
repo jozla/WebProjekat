@@ -1,4 +1,4 @@
-﻿namespace Gateway.Helpers
+﻿namespace Gateway.Helpers.ChatHub
 {
     public interface IChatHub
     {

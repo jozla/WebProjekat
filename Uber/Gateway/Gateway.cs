@@ -1,5 +1,6 @@
 using FluentValidation;
-using Gateway.Helpers;
+using Gateway.Helpers.ChatHub;
+using Gateway.Helpers.Mail;
 using Gateway.Validation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -102,6 +103,7 @@ namespace Gateway
 
                         builder.Services.AddSignalR();
 
+                        builder.Services.AddTransient<IEmailSender, EmailSender>();
 
                         var app = builder.Build();
                         if (app.Environment.IsDevelopment())

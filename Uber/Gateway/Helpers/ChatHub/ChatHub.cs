@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
-namespace Gateway.Helpers
+namespace Gateway.Helpers.ChatHub
 {
     public class ChatHub : Hub<IChatHub>
     {

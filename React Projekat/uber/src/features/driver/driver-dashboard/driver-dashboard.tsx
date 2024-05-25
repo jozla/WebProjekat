@@ -15,7 +15,7 @@ export function DriverDashboard() {
   useEffect(() => {
     getRides();
 
-    const connection = new HubConnectionBuilder().withUrl("http://localhost:8389/chatHub", { withCredentials: false }).build();
+    const connection = new HubConnectionBuilder().withUrl(process.env.REACT_APP_CONN_HUB_URL!, { withCredentials: false }).build();
 
     connection
       .start()

@@ -2,6 +2,7 @@
 using Communication;
 using FluentValidation;
 using Gateway.CQRS;
+using Gateway.Helpers.Mail;
 using Gateway.Validation;
 using MediatR;
 using Microsoft.ServiceFabric.Services.Client;
@@ -22,10 +23,12 @@ namespace Gateway.Features.User
         public class CommandHandler : ICommandHandler<VerifyUserCommand>
         {
             private readonly IConfiguration _configuration;
+            private readonly IEmailSender _emailSender;
 
-            public CommandHandler(IConfiguration configuration)
+            public CommandHandler(IConfiguration configuration, IEmailSender emailSender)
             {
                 _configuration = configuration;
+                _emailSender = emailSender;
             }
             public async Task<Unit> Handle(VerifyUserCommand request, CancellationToken cancellationToken)
             {
@@ -42,6 +45,7 @@ namespace Gateway.Features.User
                 {
                     existingUser.VerificationState = VerificationState.Verified;
                     await proxy.UpdateUser(existingUser);
+                    _emailSender.SendEmail(existingUser.Email);
                 }
 
                 return Unit.Value;
