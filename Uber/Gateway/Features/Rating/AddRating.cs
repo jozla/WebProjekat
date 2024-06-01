@@ -1,7 +1,9 @@
-﻿using Communication;
+﻿using Common.Models;
+using Communication;
 using FluentValidation;
 using Gateway.CQRS;
 using MediatR;
+using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Remoting.Client;
 
 namespace Gateway.Features.Rating
@@ -27,10 +29,35 @@ namespace Gateway.Features.Rating
             }
             public async Task<Unit> Handle(AddRatingCommand request, CancellationToken cancellationToken)
             {
-                var proxy = ServiceProxy.Create<IRatingStatelessCommunication>(
+                var proxy = ServiceProxy.Create<IRatingStatefulCommunication>(
+                   new Uri(_configuration.GetValue<string>("ProxyUrls:RatingStateful")!), new ServicePartitionKey(3));
+
+                var proxyStateless = ServiceProxy.Create<IRatingStatelessCommunication>(
                    new Uri(_configuration.GetValue<string>("ProxyUrls:RatingStateless")!));
 
-                await proxy.AddRating(request.UserId, request.Rating);
+                var existingRating = await proxy.GetRating(request.UserId);
+
+                if (existingRating != null)
+                {
+                    var newRating = await proxyStateless.CalculateNewRating(
+                        existingRating.NumOfRates, existingRating.Rating, request.Rating);
+
+                    existingRating.Rating = newRating;
+                    existingRating.NumOfRates++;
+                    await proxy.UpdateRating(existingRating);
+                }
+                else
+                {
+                    var rating = new RatingModel
+                    {
+                        Id = Guid.NewGuid(),
+                        NumOfRates = 1,
+                        Rating = request.Rating,
+                        UserId = request.UserId,
+                    };
+
+                    await proxy.AddRating(rating);
+                }
 
                 return Unit.Value;
             }

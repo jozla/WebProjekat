@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communication", "Communicat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RideStateful", "RideStateful\RideStateful.csproj", "{A8591D92-B938-4958-8485-73989C43CED8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RatingStateless", "RatingStateless\RatingStateless.csproj", "{9FC4D82C-1F1B-463A-9625-5F969D3A9EBB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RatingStateless", "RatingStateless\RatingStateless.csproj", "{9FC4D82C-1F1B-463A-9625-5F969D3A9EBB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RatingStateful", "RatingStateful\RatingStateful.csproj", "{BA8DFAE2-6A77-407A-899B-769F63AAA1A8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -85,6 +87,14 @@ Global
 		{9FC4D82C-1F1B-463A-9625-5F969D3A9EBB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9FC4D82C-1F1B-463A-9625-5F969D3A9EBB}.Release|x64.ActiveCfg = Release|Any CPU
 		{9FC4D82C-1F1B-463A-9625-5F969D3A9EBB}.Release|x64.Build.0 = Release|Any CPU
+		{BA8DFAE2-6A77-407A-899B-769F63AAA1A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA8DFAE2-6A77-407A-899B-769F63AAA1A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA8DFAE2-6A77-407A-899B-769F63AAA1A8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BA8DFAE2-6A77-407A-899B-769F63AAA1A8}.Debug|x64.Build.0 = Debug|Any CPU
+		{BA8DFAE2-6A77-407A-899B-769F63AAA1A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA8DFAE2-6A77-407A-899B-769F63AAA1A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA8DFAE2-6A77-407A-899B-769F63AAA1A8}.Release|x64.ActiveCfg = Release|Any CPU
+		{BA8DFAE2-6A77-407A-899B-769F63AAA1A8}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

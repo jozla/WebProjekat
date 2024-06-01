@@ -4,7 +4,6 @@ namespace Communication
 {
     public interface IRatingStatelessCommunication : IService
     {
-        Task AddRating(Guid userId, double rating);
-        Task<double?> GetRating(Guid userId);
+        Task<double> CalculateNewRating(int numOfRates, double rating, int newRating);
     }
 }

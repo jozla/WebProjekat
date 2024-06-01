@@ -1,6 +1,7 @@
 ﻿using Communication;
 using Gateway.CQRS;
 using Gateway.Validation;
+using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Remoting.Client;
 
 namespace Gateway.Features.Rating
@@ -20,8 +21,8 @@ namespace Gateway.Features.Rating
             }
             public async Task<GetRatingForUserResponse> Handle(GetRatingForUserQuery request, CancellationToken cancellationToken)
             {
-                var proxy = ServiceProxy.Create<IRatingStatelessCommunication>(
-                    new Uri(_configuration.GetValue<string>("ProxyUrls:RatingStateless")!));
+                var proxy = ServiceProxy.Create<IRatingStatefulCommunication>(
+                    new Uri(_configuration.GetValue<string>("ProxyUrls:RatingStateful")!), new ServicePartitionKey(3));
 
                 var rating = await proxy.GetRating(request.UserId);
 
@@ -30,7 +31,7 @@ namespace Gateway.Features.Rating
                     throw new EntityNotFoundException();
                 }
 
-                return new GetRatingForUserResponse(rating);
+                return new GetRatingForUserResponse(rating.Rating);
             }
         }
     }

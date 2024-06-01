@@ -1,7 +1,4 @@
-using Common.Models;
 using Communication;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Remoting.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
@@ -14,52 +11,18 @@ namespace RatingStateless
     /// </summary>
     internal sealed class RatingStateless : StatelessService, IRatingStatelessCommunication
     {
-        private RatingDbContext _ratingDbContext;
-        public RatingStateless(StatelessServiceContext context, IServiceProvider serviceProvider)
+        public RatingStateless(StatelessServiceContext context)
             : base(context)
-        {
-            _ratingDbContext = serviceProvider.GetService<RatingDbContext>()!;
-        }
+        { }
 
         #region RatingMethods
-        public async Task AddRating(Guid userId, double rating)
+        public Task<double> CalculateNewRating(int numOfRates, double rating, int newRating)
         {
-            var ratings = await _ratingDbContext.Ratings.ToListAsync();
-            var existingRating = await _ratingDbContext.Ratings.SingleOrDefaultAsync(r => r.UserId == userId);
-
-            if (existingRating == null)
-            {
-                var newRating = new RatingModel
-                {
-                    Id = Guid.NewGuid(),
-                    Rating = rating,
-                    UserId = userId,
-                    NumOfRates = 1
-                };
-
-                await _ratingDbContext.Ratings.AddAsync(newRating);
-                await _ratingDbContext.SaveChangesAsync();
-            }
-            else
-            {
-                var sum = existingRating.Rating * existingRating.NumOfRates;
-                sum += rating;
-                existingRating.NumOfRates++;
-                existingRating.Rating = sum / existingRating.NumOfRates;
-                await _ratingDbContext.SaveChangesAsync();
-            }
+            var sum = rating * numOfRates;
+            sum += newRating;
+            numOfRates++;
+            return Task.FromResult(sum / numOfRates);
         }
-
-        public async Task<double?> GetRating(Guid userId)
-        {
-            var existingRating = await _ratingDbContext.Ratings.SingleOrDefaultAsync(r => r.UserId == userId);
-            if (existingRating != null)
-            {
-                return existingRating.Rating;
-            }
-            return null;
-        }
-
         #endregion
         /// <summary>
         /// Optional override to create listeners (e.g., TCP, HTTP) for this service replica to handle client or user requests.
