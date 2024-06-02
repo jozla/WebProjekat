@@ -30,7 +30,7 @@ export function Header(){
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <span className={`navbar-brand ${styles.home} ${styles.link}`} onClick={handleBackToHome}>UBER</span>
         <span className={`nav-item nav-link disabled ${styles.status} ms-4`}>{DecodeToken()?.verification}</span>
-        <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="navbarNavAltMarkup">

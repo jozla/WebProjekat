@@ -4,9 +4,13 @@ import styles from "../rides/rides.module.css";
 import { useNavigate } from "react-router-dom";
 import { RideModel } from "../../../shared/models/ride";
 import { getAllRides } from "../../../services/ride.service";
+import RideDetails from "../ride-details/ride-details";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 
 export function Rides() {
   const [rides, setRides] = useState<{ data: RideModel[] }>({ data: [] });
+  const [selectedRide, setSelectedRide] = useState({ passengerId: "", driverId: "" });
+  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,6 +24,15 @@ export function Rides() {
     } catch {
       console.log("Error getting new rides");
     }
+  };
+
+  const handleShowModal = (passengerId, driverId) => {
+    setSelectedRide({ passengerId, driverId });
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
   };
 
   return (
@@ -59,6 +72,14 @@ export function Rides() {
                     </td>
                     <td>{row.driverId === "00000000-0000-0000-0000-000000000000" ? "N/A" : row.driverId}</td>
                     <td>{row.passengerId}</td>
+                    <td>
+                      <button
+                        className="btn btn-dark"
+                        onClick={() => handleShowModal(row.passengerId, row.driverId)}
+                      >
+                        Check details
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -66,6 +87,17 @@ export function Rides() {
           )}
         </div>
       </div>
+
+      <div>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogContent>
+          <RideDetails passengerId={selectedRide.passengerId} driverId={selectedRide.driverId} />
+        </DialogContent>
+        <DialogActions>
+          <button className="btn btn-dark" onClick={handleClose}>Close</button>
+        </DialogActions>
+      </Dialog>
+    </div>
     </>
   );
 }
