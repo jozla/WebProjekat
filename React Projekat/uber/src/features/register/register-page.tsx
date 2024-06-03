@@ -94,7 +94,7 @@ export default function Register() {
               <div className="form-group">
                 <label htmlFor="confirmPassword">Confirm Password</label>
                 <Field
-                  type="text"
+                  type="password"
                   className={`form-control ${styles.field} ${errors.confirmPassword && touched.confirmPassword ? styles.inputError : ""}`}
                   name="confirmPassword"
                   placeholder="Confirm Password"

@@ -126,6 +126,8 @@ namespace Gateway
                         app.UseAuthentication();
                         app.UseAuthorization();
 
+                        app.UseStaticFiles();
+
                         app.MapHub<ChatHub>("/chatHub");
                         app.MapControllers();
 

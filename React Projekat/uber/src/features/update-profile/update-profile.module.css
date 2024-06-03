@@ -28,3 +28,16 @@
 .field {
     width: 300px;
 }
+
+.image{
+    width: 60px;
+    height: 60px;
+}
+
+.profileImage{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 35px;
+    width: 300px;
+}

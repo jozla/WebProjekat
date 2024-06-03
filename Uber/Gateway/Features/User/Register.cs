@@ -71,8 +71,11 @@ namespace Gateway.Features.User
                         }
                         newUser.Image = imageFileName;
                     }
+                    else
+                    {
+                        newUser.Image = "";
+                    }
 
-                    newUser.Image = "";
 
                     if (newUser.Role == UserRole.Driver)
                     {

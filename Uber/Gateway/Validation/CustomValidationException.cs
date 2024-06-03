@@ -61,6 +61,20 @@ public class CustomValidationException
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
             await context.Response.WriteAsJsonAsync(problemDetails);
         }
+        catch (WrongCredentialsException)
+        {
+            var problemDetails = new ValidationProblemDetails
+            {
+                Status = StatusCodes.Status400BadRequest,
+                Type = "ValidationFailure",
+                Title = "Validation error",
+                Detail = "One or more validation errors has occurred",
+                Errors = new Dictionary<string, string[]>()
+            };
+            problemDetails.Errors.Add("Credentials", ["Wrong credentials."]);
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            await context.Response.WriteAsJsonAsync(problemDetails);
+        }
         catch (RideConfirmedException)
         {
             var problemDetails = new ValidationProblemDetails

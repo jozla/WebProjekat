@@ -42,13 +42,13 @@ namespace Gateway.Features.User
 
                 if (existingUser == null)
                 {
-                    throw new EntityNotFoundException();
+                    throw new WrongCredentialsException();
                 }
                 else
                 {
                     if (!BCrypt.Net.BCrypt.Verify(request.Password, existingUser.Password))
                     {
-                        throw new BadPasswordException();
+                        throw new WrongCredentialsException();
                     }
                     var token = GenerateToken(existingUser, _configuration);
                     return new LogInResponse(token);

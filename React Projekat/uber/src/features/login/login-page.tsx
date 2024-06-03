@@ -92,7 +92,7 @@ export default function LogIn() {
               <div className="form-group">
                 <label htmlFor="password">Password</label>
                 <Field type="password" className={`form-control  ${styles.field} ${errors.password && touched.password ? styles.inputError : ""}`} name="password" placeholder="Password" />
-                <ErrorMessage name="password" component="div" className={styles.field} />
+                <ErrorMessage name="password" component="div" className={styles.error} />
               </div>
               <button type="submit" className={`btn btn-dark mt-3 ${styles.submitButton}`} disabled={!isValid || !dirty}>
                 Submit

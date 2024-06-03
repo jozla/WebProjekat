@@ -8,7 +8,9 @@ export const login = async (data: LoginFormValues) => {
     const response = await axiosInstance.post("/users/login", data);
     return response.data;
   } catch (error) {
-    console.error("Error fetching users:", error);
+    if(data.password && data.password !== ''){
+      showErrors(error.response.data.errors);
+    }
     throw error;
   }
 };
@@ -25,7 +27,7 @@ export const register = async (data: UserModel) => {
       },
     });
   } catch (error) {
-    console.error("Error fetching users:", error);
+    showErrors(error.response.data.errors);
     throw error;
   }
 };
@@ -42,7 +44,7 @@ export const updateProfile = async (data: UpdateFormValues) => {
       },
     });
   } catch (error) {
-    console.error("Error fetching users:", error);
+    showErrors(error.response.data.errors);
     throw error;
   }
 };
@@ -84,3 +86,14 @@ export const blockUser = async (data: any) => {
     throw error;
   }
 };
+
+const showErrors = (errors) => {
+  var errorMessages: string[] = [];
+
+  for (var key in errors) {
+    if (errors.hasOwnProperty(key)) {
+      errorMessages.push(errors[key]);
+    }
+  }
+  alert(errorMessages.join("\n"));
+}

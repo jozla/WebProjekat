@@ -10,6 +10,7 @@ import { Header } from "../../shared/header/header";
 export default function UpdateProfile() {
   const [initialValues, setInitialValues] = useState<UpdateFormValues | null>(null);
   const [image, setImage] = useState<any>(null);
+  const [imageUrl, setImageUrl] = useState<string>('');
 
   useEffect(() => {
     getUserData();
@@ -30,6 +31,8 @@ export default function UpdateProfile() {
       address: response.user.address,
       image: null,
     });
+   
+    setImageUrl(`http://localhost:8389/images/${response.user.image}`);
   };
 
   const validationSchema = Yup.object().shape({
@@ -68,8 +71,12 @@ export default function UpdateProfile() {
       <Header></Header>
       <div className={styles.wrapper}>
         <div className={styles.form}>
-          <h2 className="mb-4">Update profile</h2>
+            <h2 className="mb-4">Update profile</h2>
           <p>If you did registration via Google in oldPassword or newPassword field you can just type "/" if you don't want to change password.</p>
+          <div className={styles.profileImage}>
+            <p>Profile image:</p>
+            <img className={styles.image} src={imageUrl} alt='Missing' />
+          </div>
           <Formik initialValues={initialValues!} validationSchema={validationSchema} onSubmit={handleSubmit}>
             {({ isValid, dirty, errors, touched, handleSubmit }) => (
               <form onSubmit={handleSubmit}>
@@ -85,12 +92,12 @@ export default function UpdateProfile() {
                 </div>
                 <div className="form-group">
                   <label htmlFor="oldPassword">Old Password</label>
-                  <Field type="text" className={`form-control ${styles.field} ${errors.oldPassword && touched.oldPassword ? styles.inputError : ""}`} name="oldPassword" placeholder="Old Password" />
+                  <Field type="password" className={`form-control ${styles.field} ${errors.oldPassword && touched.oldPassword ? styles.inputError : ""}`} name="oldPassword" placeholder="Old Password" />
                   <ErrorMessage name="oldPassword" component="div" className={styles.error} />
                 </div>
                 <div className="form-group">
                   <label htmlFor="newPassword">New Password</label>
-                  <Field type="text" className={`form-control ${styles.field} ${errors.newPassword && touched.newPassword ? styles.inputError : ""}`} name="newPassword" placeholder="New Password" />
+                  <Field type="password" className={`form-control ${styles.field} ${errors.newPassword && touched.newPassword ? styles.inputError : ""}`} name="newPassword" placeholder="New Password" />
                   <ErrorMessage name="newPassword" component="div" className={styles.error} />
                 </div>
                 <div className="form-group">
