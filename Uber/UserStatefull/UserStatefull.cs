@@ -1,6 +1,8 @@
 using Common.Enums;
 using Common.Models;
 using Communication;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Remoting.Runtime;
@@ -14,9 +16,12 @@ namespace UserStatefull
     /// </summary>
     internal sealed class UserStatefull : StatefulService, IUserStatefulCommunication
     {
-        public UserStatefull(StatefulServiceContext context)
+        private UserDbContext _userDbContext;
+        public UserStatefull(StatefulServiceContext context, IServiceProvider serviceProvider)
             : base(context)
-        { }
+        {
+            _userDbContext = serviceProvider.GetService<UserDbContext>()!;
+        }
 
         #region UserMethods
         public async Task<IEnumerable<UserModel>> GetAllDrivers()
@@ -87,6 +92,8 @@ namespace UserStatefull
                 await usersDict.AddOrUpdateAsync(transaction, user.Id, user, (k, v) => v);
                 await transaction.CommitAsync();
             }
+            await _userDbContext.Users.AddAsync(user);
+            await _userDbContext.SaveChangesAsync();
         }
 
         public async Task UpdateUser(UserModel user)
@@ -99,6 +106,19 @@ namespace UserStatefull
                 await usersDict.AddOrUpdateAsync(transaction, user.Id, user, (k, v) => user);
                 await transaction.CommitAsync();
             }
+            var existingUser = await _userDbContext.Users.FirstOrDefaultAsync(u => u.Id == user.Id);
+
+            existingUser.UserName = user.UserName;
+            existingUser.Email = user.Email;
+            existingUser.Password = user.Password;
+            existingUser.Name = user.Name;
+            existingUser.LastName = user.LastName;
+            existingUser.Birthday = user.Birthday;
+            existingUser.Address = user.Address;
+            existingUser.Image = user.Image;
+            existingUser.VerificationState = user.VerificationState;
+
+            await _userDbContext.SaveChangesAsync();
         }
         #endregion
 
@@ -126,6 +146,24 @@ namespace UserStatefull
             //       or remove this RunAsync override if it's not needed in your service.
 
             var myDictionary = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, long>>("myDictionary");
+
+            try
+            {
+
+                var users = await _userDbContext.Users.ToListAsync();
+
+                if (users != null && users.Count > 0)
+                {
+                    foreach (var user in users)
+                    {
+                        await this.Register(user);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
 
             while (true)
             {

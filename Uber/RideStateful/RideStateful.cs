@@ -1,6 +1,7 @@
 using Common.Enums;
 using Common.Models;
 using Communication;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
@@ -15,11 +16,11 @@ namespace RideStateful
     /// </summary>
     internal sealed class RideStateful : StatefulService, IRideStatefulCommunication
     {
-        private RidesDbContext _myDbContext;
+        private RidesDbContext _rideDbContext;
         public RideStateful(StatefulServiceContext context, IServiceProvider provider)
             : base(context)
         {
-            _myDbContext = provider.GetService<RidesDbContext>()!;
+            _rideDbContext = provider.GetService<RidesDbContext>()!;
         }
 
         #region RideMethods
@@ -32,7 +33,10 @@ namespace RideStateful
             {
                 await ridesDict.AddOrUpdateAsync(transaction, ride.Id, ride, (k, v) => v);
                 await transaction.CommitAsync();
+
             }
+            await _rideDbContext.Rides.AddAsync(ride);
+            await _rideDbContext.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<RideModel>> GetAllRides()
@@ -177,7 +181,20 @@ namespace RideStateful
             {
                 await ridesDict.AddOrUpdateAsync(transaction, ride.Id, ride, (k, v) => ride);
                 await transaction.CommitAsync();
+
             }
+            var existingRide = await _rideDbContext.Rides.FirstOrDefaultAsync(r => r.Id == ride.Id);
+
+            existingRide.StartingPoint = ride.StartingPoint;
+            existingRide.EndingPoint = ride.EndingPoint;
+            existingRide.Price = ride.Price;
+            existingRide.DriverTimeInSeconds = ride.DriverTimeInSeconds;
+            existingRide.ArrivalTimeInSeconds = ride.ArrivalTimeInSeconds;
+            existingRide.DriverId = ride.DriverId;
+            existingRide.PassengerId = ride.PassengerId;
+            existingRide.Status = ride.Status;
+
+            await _rideDbContext.SaveChangesAsync();
         }
         #endregion
 
@@ -204,6 +221,23 @@ namespace RideStateful
             //       or remove this RunAsync override if it's not needed in your service.
 
             var myDictionary = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, long>>("myDictionary");
+
+            try
+            {
+                var rides = await _rideDbContext.Rides.ToListAsync();
+
+                if (rides != null && rides.Count > 0)
+                {
+                    foreach (var ride in rides)
+                    {
+                        await this.AddRide(ride);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
 
             while (true)
             {

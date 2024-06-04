@@ -1,5 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Services.Runtime;
 using System.Diagnostics;
+using System.Fabric;
 
 namespace UserStatefull
 {
@@ -16,9 +19,25 @@ namespace UserStatefull
                 // Registering a service maps a service type name to a .NET type.
                 // When Service Fabric creates an instance of this service type,
                 // an instance of the class is created in this host process.
+                CodePackageActivationContext context = FabricRuntime.GetActivationContext();
+                var configSettings = context.GetConfigurationPackageObject("Config").Settings;
+                var data = configSettings.Sections["DatabaseConfig"];
+                var connectionString = "";
+                foreach (var parameter in data.Parameters)
+                {
+                    if (parameter.Name == "ConnectionString")
+                    {
+                        connectionString = parameter.Value;
+                    }
+                }
+
+                var provider = new ServiceCollection()
+                    .AddDbContext<UserDbContext>(options => options.UseSqlServer(connectionString))
+                    .BuildServiceProvider();
+
 
                 ServiceRuntime.RegisterServiceAsync("UserStatefullType",
-                    context => new UserStatefull(context)).GetAwaiter().GetResult();
+                    context => new UserStatefull(context, provider)).GetAwaiter().GetResult();
 
                 ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(UserStatefull).Name);
 

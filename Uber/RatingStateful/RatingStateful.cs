@@ -1,5 +1,6 @@
 using Common.Models;
 using Communication;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
@@ -31,7 +32,10 @@ namespace RatingStateful
             {
                 await ratingsDict.AddOrUpdateAsync(transaction, rating.Id, rating, (k, v) => v);
                 await transaction.CommitAsync();
+
             }
+            await _ratingDbContext.Ratings.AddAsync(rating);
+            await _ratingDbContext.SaveChangesAsync();
         }
 
         public async Task UpdateRating(RatingModel rating)
@@ -43,7 +47,15 @@ namespace RatingStateful
             {
                 await ratingsDict.AddOrUpdateAsync(transaction, rating.Id, rating, (k, v) => rating);
                 await transaction.CommitAsync();
+
             }
+            var existingRating = await _ratingDbContext.Ratings.FirstOrDefaultAsync(r => r.Id == rating.Id);
+
+            existingRating.UserId = rating.UserId;
+            existingRating.Rating = rating.Rating;
+            existingRating.NumOfRates = rating.NumOfRates;
+
+            await _ratingDbContext.SaveChangesAsync();
         }
 
         public async Task<RatingModel> GetRating(Guid userId)
@@ -90,6 +102,23 @@ namespace RatingStateful
             //       or remove this RunAsync override if it's not needed in your service.
 
             var myDictionary = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, long>>("myDictionary");
+
+            try
+            {
+                var ratings = await _ratingDbContext.Ratings.ToListAsync();
+
+                if (ratings != null && ratings.Count > 0)
+                {
+                    foreach (var rating in ratings)
+                    {
+                        await this.AddRating(rating);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
 
             while (true)
             {
