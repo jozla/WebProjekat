@@ -36,7 +36,7 @@ namespace Gateway.Controllers
         public async Task<ActionResult> ConfirmRide(ConfirmRide.ConfirmRideCommand request)
         {
             await _mediator.Send(request);
-            await _chatHub.Clients.Group("User").SendMessage("Confirmed");
+            await _chatHub.Clients.Group(request.PassengerId.ToString()).SendMessage("Confirmed");
             return Ok();
         }
 

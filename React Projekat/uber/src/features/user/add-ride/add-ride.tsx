@@ -50,7 +50,7 @@ export function AddRide() {
   const confirmRide = async () => {
     try{
       await addRide(rideDetails as RideModel);
-      navigate('/user/waiting-page')
+      navigate('/user/waiting-page', {state: {passengerId: rideDetails?.passengerId}});
     }
     catch{
       console.log("Error adding new ride");

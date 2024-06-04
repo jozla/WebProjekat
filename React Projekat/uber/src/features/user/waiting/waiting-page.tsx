@@ -1,22 +1,25 @@
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { useEffect, useState } from "react";
 import styles from "../waiting/waiting-page.module.css";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getConfirmedRide } from "../../../services/ride.service";
 import { RideModel } from "../../../shared/models/ride";
 import { DecodeToken } from "../../../services/token-decoder";
 
 export default function WaitingPage() {
   const navigate = useNavigate();
+  const state = useLocation();
   const [ride, setRide] = useState<RideModel | null>(null);
 
   useEffect(() => {
+    const {passengerId} = state.state;
+    
     const connection = new HubConnectionBuilder().withUrl(process.env.REACT_APP_CONN_HUB_URL!, { withCredentials: false }).build();
     connection
       .start()
       .then(() => {
         console.log("Connected to SignalR hub");
-        connection.invoke("JoinGroup", "User");
+        connection.invoke("JoinGroup", passengerId);
       })
       .catch((err) => console.error("Error connecting to hub:", err));
 

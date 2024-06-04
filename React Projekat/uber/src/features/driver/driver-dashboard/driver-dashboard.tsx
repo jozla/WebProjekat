@@ -44,11 +44,12 @@ export function DriverDashboard() {
     return Math.max(randomArrivalTime, 300);
   };
 
-  const handleConfirmRide = async (id: string) => {
+  const handleConfirmRide = async (id: string, passengerId:string) => {
     try {
       var decodedToken = DecodeToken()!;
       var data = {
         rideId: id,
+        passengerId: passengerId,
         driverId: decodedToken.user_id,
         arrivalTimeInSeconds: generateRandomTime(),
       };
@@ -125,7 +126,7 @@ export function DriverDashboard() {
                       <td>{row.endingPoint}</td>
                       <td>{Math.floor(row.driverTimeInSeconds / 60)}</td>
                       <td>
-                        <button onClick={() => handleConfirmRide(row.id)} className="btn btn-success">
+                        <button onClick={() => handleConfirmRide(row.id, row.passengerId)} className="btn btn-success">
                           Confirm
                         </button>
                       </td>

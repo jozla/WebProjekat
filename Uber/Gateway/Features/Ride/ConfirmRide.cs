@@ -11,13 +11,14 @@ namespace Gateway.Features.Ride
 {
     public class ConfirmRide
     {
-        public record ConfirmRideCommand(Guid DriverId, Guid RideId, int ArrivalTimeInSeconds) : ICommand;
+        public record ConfirmRideCommand(Guid DriverId, Guid PassengerId, Guid RideId, int ArrivalTimeInSeconds) : ICommand;
 
         public class Validator : AbstractValidator<ConfirmRideCommand>
         {
             public Validator()
             {
                 RuleFor(entity => entity.DriverId).NotEmpty().WithMessage("Driver id is required");
+                RuleFor(entity => entity.PassengerId).NotEmpty().WithMessage("Driver id is required");
                 RuleFor(entity => entity.RideId).NotEmpty().WithMessage("Ride id is required");
                 RuleFor(entity => entity.ArrivalTimeInSeconds).NotEmpty().WithMessage("Arrival time is required");
             }
