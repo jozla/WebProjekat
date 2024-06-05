@@ -108,17 +108,20 @@ namespace UserStatefull
             }
             var existingUser = await _userDbContext.Users.FirstOrDefaultAsync(u => u.Id == user.Id);
 
-            existingUser.UserName = user.UserName;
-            existingUser.Email = user.Email;
-            existingUser.Password = user.Password;
-            existingUser.Name = user.Name;
-            existingUser.LastName = user.LastName;
-            existingUser.Birthday = user.Birthday;
-            existingUser.Address = user.Address;
-            existingUser.Image = user.Image;
-            existingUser.VerificationState = user.VerificationState;
+            if (existingUser != null)
+            {
+                existingUser.UserName = user.UserName;
+                existingUser.Email = user.Email;
+                existingUser.Password = user.Password;
+                existingUser.Name = user.Name;
+                existingUser.LastName = user.LastName;
+                existingUser.Birthday = user.Birthday;
+                existingUser.Address = user.Address;
+                existingUser.Image = user.Image;
+                existingUser.VerificationState = user.VerificationState;
 
-            await _userDbContext.SaveChangesAsync();
+                await _userDbContext.SaveChangesAsync();
+            }
         }
         #endregion
 

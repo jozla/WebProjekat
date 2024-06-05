@@ -87,6 +87,16 @@ export const blockUser = async (data: any) => {
   }
 };
 
+export const sendMessage = async (data: any) => {
+  try {
+    console.log(data);
+    await axiosInstance.post("/users/send-message", data);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    throw error;
+  }
+};
+
 const showErrors = (errors) => {
   var errorMessages: string[] = [];
 

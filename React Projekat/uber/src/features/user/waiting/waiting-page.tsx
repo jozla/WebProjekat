@@ -10,9 +10,11 @@ export default function WaitingPage() {
   const navigate = useNavigate();
   const state = useLocation();
   const [ride, setRide] = useState<RideModel | null>(null);
+  const [passengerId, setPassengerId] = useState<string|null>(null);
 
   useEffect(() => {
     const {passengerId} = state.state;
+    setPassengerId(passengerId);
     
     const connection = new HubConnectionBuilder().withUrl(process.env.REACT_APP_CONN_HUB_URL!, { withCredentials: false }).build();
     connection
@@ -33,11 +35,17 @@ export default function WaitingPage() {
       navigate("/timer", {
         state: {
           initialMinute: 0,
-          initialSeconds: 5,
+          // initialMinute: Math.floor((ride.driverTimeInSeconds) / 60),
+          initialSeconds: 15,
+          // initialSeconds: ride.driverTimeInSeconds % 60,
           arrivalMinute: 0,
+          // arrivalMinute: Math.floor((ride.arrivalTimeInSeconds) / 60)
           arrivalSeconds: 5,
+          // arrivalSeconds: ride.arrivalTimeInSeconds % 60
           rideId: ride.id,
-          driverId: ride.driverId
+          driverId: ride.driverId,
+          passengerId : passengerId,
+          isPassenger : true
         },
       });
     }

@@ -1,7 +1,9 @@
 ﻿using Gateway.Features.User;
+using Gateway.Helpers.ChatHub;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Gateway.Controllers
 {
@@ -10,10 +12,12 @@ namespace Gateway.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IHubContext<ChatHub, IChatHub> _chatHub;
 
-        public UsersController(IMediator mediator)
+        public UsersController(IMediator mediator, IHubContext<ChatHub, IChatHub> chatHub)
         {
             _mediator = mediator;
+            _chatHub = chatHub;
         }
 
         [HttpPost]
@@ -69,6 +73,16 @@ namespace Gateway.Controllers
         public async Task<ActionResult> BlockUser(BlockUser.BlockUserCommand request)
         {
             await _mediator.Send(request);
+            return Ok();
+        }
+
+        [HttpPost("send-message")]
+        [Authorize]
+        [Authorize(Roles = "User,Driver")]
+        public async Task<ActionResult> SendMessageToUser(SendMessageToUser.SendMessageToUserCommand request)
+        {
+            await _mediator.Send(request);
+            await _chatHub.Clients.Group(request.UserId.ToString()).SendMessage(request.Message);
             return Ok();
         }
     }

@@ -76,11 +76,17 @@ export function DriverDashboard() {
       navigate("/timer", {
         state: {
           initialMinute: 0,
-          initialSeconds: 5,
+          // initialMinute: Math.floor((ride.driverTimeInSeconds) / 60),
+          initialSeconds: 15,
+          // initialSeconds: ride.driverTimeInSeconds % 60,
           arrivalMinute: 0,
+          // arrivalMinute: Math.floor((ride.arrivalTimeInSeconds) / 60)
           arrivalSeconds: 5,
+          // arrivalSeconds: ride.arrivalTimeInSeconds % 60
           rideId: ride.id,
           driverId: ride.driverId,
+          passengerId: ride.passengerId,
+          isPassenger: false
         },
       });
     }

@@ -51,11 +51,14 @@ namespace RatingStateful
             }
             var existingRating = await _ratingDbContext.Ratings.FirstOrDefaultAsync(r => r.Id == rating.Id);
 
-            existingRating.UserId = rating.UserId;
-            existingRating.Rating = rating.Rating;
-            existingRating.NumOfRates = rating.NumOfRates;
+            if (existingRating != null)
+            {
+                existingRating.UserId = rating.UserId;
+                existingRating.Rating = rating.Rating;
+                existingRating.NumOfRates = rating.NumOfRates;
 
-            await _ratingDbContext.SaveChangesAsync();
+                await _ratingDbContext.SaveChangesAsync();
+            }
         }
 
         public async Task<RatingModel> GetRating(Guid userId)

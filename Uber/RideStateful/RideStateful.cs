@@ -185,16 +185,19 @@ namespace RideStateful
             }
             var existingRide = await _rideDbContext.Rides.FirstOrDefaultAsync(r => r.Id == ride.Id);
 
-            existingRide.StartingPoint = ride.StartingPoint;
-            existingRide.EndingPoint = ride.EndingPoint;
-            existingRide.Price = ride.Price;
-            existingRide.DriverTimeInSeconds = ride.DriverTimeInSeconds;
-            existingRide.ArrivalTimeInSeconds = ride.ArrivalTimeInSeconds;
-            existingRide.DriverId = ride.DriverId;
-            existingRide.PassengerId = ride.PassengerId;
-            existingRide.Status = ride.Status;
+            if (existingRide != null)
+            {
+                existingRide.StartingPoint = ride.StartingPoint;
+                existingRide.EndingPoint = ride.EndingPoint;
+                existingRide.Price = ride.Price;
+                existingRide.DriverTimeInSeconds = ride.DriverTimeInSeconds;
+                existingRide.ArrivalTimeInSeconds = ride.ArrivalTimeInSeconds;
+                existingRide.DriverId = ride.DriverId;
+                existingRide.PassengerId = ride.PassengerId;
+                existingRide.Status = ride.Status;
+                await _rideDbContext.SaveChangesAsync();
+            }
 
-            await _rideDbContext.SaveChangesAsync();
         }
         #endregion
 
