@@ -12,11 +12,11 @@ public class EmailSender : IEmailSender
         SmtpClient client = new SmtpClient("smtp.ethereal.email", 587);
         client.EnableSsl = true;
         client.UseDefaultCredentials = false;
-        client.Credentials = new NetworkCredential("dale.koelpin@ethereal.email", "Z3CSeAnM4sDgEDCb65");
+        client.Credentials = new NetworkCredential("rupert.oconner91@ethereal.email", "nHfT6djMazndNJWVf4");
 
         // Create email message
         MailMessage mailMessage = new MailMessage();
-        mailMessage.From = new MailAddress("dale.koelpin@ethereal.email");
+        mailMessage.From = new MailAddress("rupert.oconner91@ethereal.email");
         mailMessage.To.Add(toEmail);
         mailMessage.Subject = "Verification";
         mailMessage.IsBodyHtml = true;

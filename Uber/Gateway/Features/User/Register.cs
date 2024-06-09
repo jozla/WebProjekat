@@ -45,6 +45,10 @@ namespace Gateway.Features.User
                 {
                     throw new UserExistsException();
                 }
+                //else if (request.Role == UserRole.Admin)
+                //{
+                //    throw new AdminRegistrationException();
+                //}
                 else
                 {
                     var newUser = new UserModel
